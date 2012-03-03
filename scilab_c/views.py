@@ -85,7 +85,7 @@ def scilab_evaluate(request):
 				p = canvas.Canvas(str(graph)+".pdf",pagesize=letter)
 
                         	#p.drawString(100,100,all_code)
-                        	p.drawImage("/root/scilab_cloud/"+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
+                        	p.drawImage("/root/Downloads/scilab_cloud/"+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
                            # Close the PDF object cleanly, and we're done.
                        		p.showPage()
 	                   	p.save()
