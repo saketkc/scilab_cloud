@@ -43,6 +43,7 @@ def scilab_evaluate(request):
 			output = ""
 			the_variable = ""
 			graphs = []
+			links = []
 			for i in range(0,len(split_code)):
 				plot_data = plot_filter.findall(split_code[i])
 				split_more = split_code[i].split("=")
@@ -66,11 +67,11 @@ def scilab_evaluate(request):
 					pylab.savefig(cwdsf)
 			for graph in graphs:
 				p = canvas.Canvas(cwd+str(graph)+".pdf",pagesize=letter)
-			
+				links.append(str(request.META['SERVER_NAME'])+":"+str(request.META['SERVER_PORT']) + str(graph))
                         	p.drawImage(cwd+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
                        		p.showPage()
 	                   	p.save()
-			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs,'username':request.session['username']})
+			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs,'username':request.session['username'],"links":links})
         else:
 		return render_to_response('default.html',{'input':all_code,'output':"error"})
 

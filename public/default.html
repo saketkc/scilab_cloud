@@ -56,7 +56,8 @@ a {text-decoration:none}
 <br>
 
 Download links
+<br>
 {% for link in graphs %}
-<a href = "http://10.102.152.23:8000/download/{{link}}">{{link}}</a>
+<a href = "{{request.path}}/download/{{link}}">{{link}}</a>
 {% endfor %}
 </body></html>
