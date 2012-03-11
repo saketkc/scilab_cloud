@@ -45,7 +45,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'scilab_c/public')
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'public')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -107,7 +107,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), 'scilab_c/public/templates'),
+    os.path.join(os.path.dirname(__file__), 'public'),
 )
 
 INSTALLED_APPS = (
@@ -118,6 +118,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     #'django.contrib.staticfiles',
     'scilab_cloud.scilab_c',
+    'scilab_cloud.login_manager',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
