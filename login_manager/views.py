@@ -3,6 +3,11 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response
 import _mysql
 import hashlib
+def logout(request):
+
+	del request.session['user_id']
+	del request.session['username']
+	return HttpResponseRedirect("/login")
 
 def login(request):
 	if request.method == "POST":	

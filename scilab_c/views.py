@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 import commands
 import re
 import sciscipy
+import os
 import numpy
 import pylab
 from scilab import Scilab
@@ -13,12 +14,23 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.units import inch
 def default_view(request):
+	try:
+		user_id = request.session['user_id']
+	except:
+		return HttpResponseRedirect("/login")
+
 	return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
 
 def scilab_evaluate(request):
 	
+	try:
+		user_id = request.session['user_id']
+	except:
+		return HttpResponseRedirect("/login")
         all_code = request.POST.get('scilab_code')
-        all_code = all_code.replace(" ","")
+        if not all_code:
+		return HttpResponseRedirect("/scilab_view")
+	all_code = all_code.replace(" ","")
 	graphics_mode = request.POST.get('graphicsmode')
 	all_code = all_code.replace("//Type Code Here","")
 	filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s")
@@ -46,14 +58,16 @@ def scilab_evaluate(request):
 					x=coordinates[0]
 					y=coordinates[1]
 					pylab.plot(the_data_set[x],the_data_set[y])
-		           	        graphs.append(str(request.session['user_id']+'simple_plot' + str(i))
-					cwd = str(os.getcwd()) + "/graphs/" 
+		           	        graphs.append('simple_plot' + str(i))
+					cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
 					cwdsf = cwd + str(graphs[-1])
-					pylab.savefig(cwdfs)
+					if not os.path.exists(cwd):
+					    os.makedirs(cwd)
+					pylab.savefig(cwdsf)
 			for graph in graphs:
-				p = canvas.Canvas(str(graph)+".pdf",pagesize=letter)
+				p = canvas.Canvas(cwd+str(graph)+".pdf",pagesize=letter)
 			
-                        	p.drawImage(cwd+str(request.session['user_id'])+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
+                        	p.drawImage(cwd+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
                        		p.showPage()
 	                   	p.save()
 			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs})
@@ -66,7 +80,8 @@ def download(request,graphname):
 	response = HttpResponse(mimetype='application/pdf')
 	response['Content-Disposition'] = 'attachment; filename='+str(graphname)+'.pdf'
 	p = canvas.Canvas(response)
-	p.drawImage("/root/scilab_cloud/"+str(request.session['user_id'])+str(graphname)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
+	cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
+	p.drawImage(cwd+str(graphname)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
         p.showPage()
  	p.save()
         return response
