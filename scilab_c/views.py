@@ -70,7 +70,7 @@ def scilab_evaluate(request):
                         	p.drawImage(cwd+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
                        		p.showPage()
 	                   	p.save()
-			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs})
+			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs,'username':request.session['username']})
         else:
 		return render_to_response('default.html',{'input':all_code,'output':"error"})
 
