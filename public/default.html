@@ -7,8 +7,12 @@
 
 <script type="text/javascript">
 function clearForm(){
-	document.scilab_eval_form.scilab_code.value="";
-	document.scilab_output.value="";
+	var input = document.getElementById("scilab_code");
+//	alert(input.value);
+
+	input.value = "";	
+//	document.scilab_eval_form.scilab_code.value="";
+//	document.scilab_output.value="";
 };
 </script>
 <style type="text/css">
@@ -41,7 +45,7 @@ a {text-decoration:none}
 
 <textarea wrap="off" style="margin: 5px; font-size: 15px; height: 150px; width: 400px; color: green; background-color: white;" rows="8" cols="35" id="scilab_code" name="scilab_code">{{input}}</textarea><br>
 <input style="cursor: pointer;" value="1" name="graphicsmode" type="checkbox">  Graphical Output(Generate PDF)   <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" id="execute" style="cursor: pointer;" border="1" title="Run Code" value="Execute">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Clear All" onclick="clearForm()">&nbsp;Clear&nbsp;</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Print Graphics output" onclick="printImg()">&nbsp;Download&nbsp;</button><br><br>
+<input type="submit" id="execute" style="cursor: pointer;" border="1" title="Run Code" value="Execute">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id="clear" border="1" style="cursor: pointer;" title="Clear All" name='Clear All' value='Clear All'  onclick="clearForm()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Print Graphics output" onclick="printImg()">&nbsp;Download&nbsp;</button><br><br>
 </form>
 </td>
 <td align="left">
