@@ -6,6 +6,7 @@ import commands
 import re
 import sciscipy
 import os
+import pexpect
 import numpy
 import pylab
 from scilab import Scilab as sci
@@ -13,6 +14,18 @@ import reportlab
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.units import inch
+def scilab_instances(scilab_code,all_code):
+	scilab_instance = pexpect.spawn('scilab-cli -nb -nwni')
+	scilab_instance.expect('-->')
+	output = ""
+	for i in range(0,len(scilab_code)):
+		print scilab_code[i]
+		scilab_instance.sendline(str(scilab_code[i]))
+		scilab_instance.expect('-->')
+		output = output + str(scilab_instance.before.replace("\r\n\x1b[?1h\x1b=","").replace("\r\n\x1b[?1l\x1b>","").replace(str(scilab_code[i]),""))
+	output.replace(all_code,"")
+	return output	
+		
 def default_view(request):
 	try:
 		user_id = request.session['user_id']
@@ -49,15 +62,15 @@ def scilab_evaluate(request):
 				plot_data = plot_filter.findall(split_code[i])
 				function_data = function_filter.findall(split_code[i])
 				if function_data:
-					a=sciscipy.eval(split_code[i])
-					re_fnname = re.compile("\[.*\]=.*\(.*,.\)")	
-					fn_data = re_fnname.findall(split_code[i])
-				
-					eval("function_name = fn_data[0].split('=')[1]")
-					
-					return_variables = eval('sci.function_name')
-
-					return HttpResponse(return_variables)
+					#a=sciscipy.eval(split_code[i])
+					#re_fnname = re.compile("\[.*\]=.*\(.*,.\)")	
+					#fn_data = re_fnname.findall(split_code[i])
+					return_variables = scilab_instances(split_code,all_code)	
+					#eval("function_name = fn_data[0].split('=')[1]")
+					return render_to_response('default.html',{'input':all_code,             'output':return_variables , 'username':request.session['username']})
+					#return_variables = eval('sci.function_name')
+					#print return_variables	
+					#return HttpResponse(return_variables)
 				split_more = split_code[i].split("=")
 				if (len(split_more)>1):
 					expression.append(split_more[1])
