@@ -8,7 +8,7 @@ import sciscipy
 import os
 import numpy
 import pylab
-from scilab import Scilab
+from scilab import Scilab as sci
 import reportlab
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
@@ -37,6 +37,7 @@ def scilab_evaluate(request):
 	if not (filter_for_system.findall(all_code)):
 			split_code = all_code.split()
 			plot_filter = re.compile("plot2d\(.*\)")
+			function_filter = re.compile("deff\(.*\)") 
 			variable =[]
 			expression = []
 			the_data_set = {}
@@ -46,6 +47,17 @@ def scilab_evaluate(request):
 			links = []
 			for i in range(0,len(split_code)):
 				plot_data = plot_filter.findall(split_code[i])
+				function_data = function_filter.findall(split_code[i])
+				if function_data:
+					a=sciscipy.eval(split_code[i])
+					re_fnname = re.compile("\[.*\]=.*\(.*,.\)")	
+					fn_data = re_fnname.findall(split_code[i])
+				
+					eval("function_name = fn_data[0].split('=')[1]")
+					
+					return_variables = eval('sci.function_name')
+
+					return HttpResponse(return_variables)
 				split_more = split_code[i].split("=")
 				if (len(split_more)>1):
 					expression.append(split_more[1])
