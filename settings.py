@@ -2,6 +2,8 @@
 import os.path
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+#APPEND_SLASH=False
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -11,10 +13,10 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'scilab',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'scilab_on_cloud',                      # Or path to database file if using sqlite3.
+        'USER': 'root',                      # Not used with sqlite3.
+        'PASSWORD': 'fedora13',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '80',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -47,6 +49,7 @@ USE_L10N = True
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'public')
 
+GRAPH_ROOT = os.path.join(os.path.dirname(__file__), 'graphs')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
@@ -147,3 +150,5 @@ LOGGING = {
         },
     }
 }
+
+#APPEND_SLASH=False

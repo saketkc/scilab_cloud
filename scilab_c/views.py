@@ -1,22 +1,27 @@
-from django.core.mail import send_mail
+import subprocess
+import simplejson as json
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-import commands
 import re
-import sciscipy
 import os
-import pexpect
-import numpy
-import pylab
-from scilab import Scilab as sci
-import reportlab
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+from datetime import datetime
 from reportlab.lib.units import inch
-def scilab_instances(scilab_code,all_code):
-	scilab_instance = pexpect.spawn('scilab-cli -nb -nwni')
-	scilab_instance.expect('-->')
+from django.views.decorators.csrf import csrf_exempt
+def scilab_instances(request,scilab_code):
+    process = subprocess.Popen(['scilab-cli -nb -nwni -e '+scilab_code],shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    output = output.strip()
+    print output
+    return HttpResponse(json.dumps({"input":scilab_code,"output":output,"graph":""}))
+
+    """if first_time:
+        scilab_instance = pexpect.spawn('scilab-cli -nb -nwni')
+        scilab_instance.expect('-->')
+        request.session['scilab'] = scilab_instance
+    else:
+        scilab_instance = request.session['scilab']
 	output = ""
 	for i in range(0,len(scilab_code)):
 		print scilab_code[i]
@@ -24,22 +29,80 @@ def scilab_instances(scilab_code,all_code):
 		scilab_instance.expect('-->')
 		output = output + str(scilab_instance.before.replace("\r\n\x1b[?1h\x1b=","").replace("\r\n\x1b[?1l\x1b>","").replace(str(scilab_code[i]),""))
 	output.replace(all_code,"")
-	return output	
-		
+	return output"""
+
+
 def default_view(request):
 	try:
 		user_id = request.session['user_id']
 	except:
 		return HttpResponseRedirect("/login")
 
-	return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
+	return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':user_id,'username':request.session['username']})
+@csrf_exempt
+def scilab_new_evaluate(request):
+    if request.method =="GET":
 
-def scilab_evaluate(request):
-	
+        return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
+    all_code = request.POST.get('scilab_code')
+    filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s")
+    if  (filter_for_system.findall(all_code)):
+        return HttpResponse(json.dumps({'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''  }),'application/json')
+    print request.POST
+    graphics_mode = request.POST.get('graphicsmode')
+    print "GARPHICSMODE",graphics_mode
+    if not graphics_mode:
+        print "No GRAPHS REQUIRED"
+        all_code = all_code + "\n quit;"
+        process = subprocess.Popen('scilab-cli -nb -nwni' ,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        print all_code
+        process.stdin.write(all_code)
+        #try:
+	soutput = process.communicate()[0]
+        #soutsoutput.replace("\000b","")
+        soutput = soutput.strip()
+        #    signal.alarm(0)
+        #except:
+        #    soutput ="Taking too long . Maybe there was an error"
+
+        print soutput
+
+        return HttpResponse(json.dumps({"input":all_code,"output":soutput,"graph":""}),'application/json')
+        #scilab_instances(request,all_code)
+
+    original_code = all_code
+    #print all_code
+
+    cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
+    cwdsf = cwd + "code.sce"
+    if not os.path.exists(cwd):
+        os.makedirs(cwd)
+    f = open(cwdsf,"w")
+    graph = datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
+    all_code = "driver(\"PNG\");\n" + "\n xinit(\""+cwd+"/"+graph+".png\");\n" + all_code+ "\nxend();\n" + "\nquit();"
+    f.write(all_code)
+    f.close()
+    p=subprocess.Popen("/opt/scilab/bin/scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+#    try:
+    out, err = p.communicate()
+ #   signal.alarm(0)
+  #  except:
+   #     out="Taking too long. Maybe ther was an errror"
+    print out
+
+    #print 'proc1\'s pid =',p.pid
+    #time.sleep(2)
+    #p.terminate()
+
+    #return render_to_response('../public/default.html',{'input':original_code,'uid':request.session['user_id'],'username':request.session['username'],'graphs':graphs,'output':out,'graph':'graph.png'})
+    return HttpResponse(json.dumps({"input":original_code,"output":out,"graph":graph}),'application/json')
+
+"""def scilab_evaluate(request):
+
 	try:
 		user_id = request.session['user_id']
 	except:
-		return HttpResponseRedirect("/login")
+		return HttpResponseRedirect("/cloud")
         all_code = request.POST.get('scilab_code')
         if not all_code:
 		return HttpResponseRedirect("/scilab_view")
@@ -50,7 +113,7 @@ def scilab_evaluate(request):
 	if not (filter_for_system.findall(all_code)):
 			split_code = all_code.split()
 			plot_filter = re.compile("plot2d\(.*\)")
-			function_filter = re.compile("deff\(.*\)") 
+			function_filter = re.compile("deff\(.*\)")
 			variable =[]
 			expression = []
 			the_data_set = {}
@@ -63,13 +126,13 @@ def scilab_evaluate(request):
 				function_data = function_filter.findall(split_code[i])
 				if function_data:
 					#a=sciscipy.eval(split_code[i])
-					#re_fnname = re.compile("\[.*\]=.*\(.*,.\)")	
+					#re_fnname = re.compile("\[.*\]=.*\(.*,.\)")
 					#fn_data = re_fnname.findall(split_code[i])
-					return_variables = scilab_instances(split_code,all_code)	
+					return_variables = scilab_instances(split_code,all_code)
 					#eval("function_name = fn_data[0].split('=')[1]")
 					return render_to_response('default.html',{'input':all_code,             'output':return_variables , 'username':request.session['username']})
 					#return_variables = eval('sci.function_name')
-					#print return_variables	
+					#print return_variables
 					#return HttpResponse(return_variables)
 				split_more = split_code[i].split("=")
 				if (len(split_more)>1):
@@ -83,13 +146,13 @@ def scilab_evaluate(request):
 					coordinates = plot_data[0].split("(")[1].split(")")[0].split(",")
 					x=coordinates[0]
 					y=coordinates[1]
-					pylab.plot(the_data_set[x],the_data_set[y])
+					plt.plot(the_data_set[x],the_data_set[y])
 		           	        graphs.append('simple_plot' + str(i))
 					cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
 					cwdsf = cwd + str(graphs[-1])
 					if not os.path.exists(cwd):
 					    os.makedirs(cwd)
-					pylab.savefig(cwdsf)
+					plt.savefig(cwdsf)
 			for graph in graphs:
 				p = canvas.Canvas(cwd+str(graph)+".pdf",pagesize=letter)
 				links.append(str(request.META['SERVER_NAME'])+":"+str(request.META['SERVER_PORT']) + str(graph))
@@ -101,12 +164,12 @@ def scilab_evaluate(request):
 		return render_to_response('default.html',{'input':all_code,'output':"error"})
 
 
-
+"""
 def download(request,graphname):
 	response = HttpResponse(mimetype='application/pdf')
 	response['Content-Disposition'] = 'attachment; filename='+str(graphname)+'.pdf'
 	p = canvas.Canvas(response)
-	cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
+	cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])+"/"
 	p.drawImage(cwd+str(graphname)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
         p.showPage()
  	p.save()

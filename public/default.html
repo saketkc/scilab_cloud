@@ -1,9 +1,12 @@
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
+<link rel="stylesheet" type="text/css" href="public/fancybox.css" media="screen" />
+<script type="text/javascript" src="public/jquery.js"></script>
+<script type="text/javascript" src="public/jquery.fancybox-1.3.4.js"></script>
+<script type="text/javascript" src="public/jquery.fancybox-1.3.4.pack.js"></script>
 <title>Scilab On Cloud</title>
 <h3> Welcome {{username}} </h3>
-<h3> Click <a href="/logout">here</a>to logout</h3>
+<h3> Click <a href="/logout"> here </a>to logout</h3>
 
 <script type="text/javascript">
 function clearForm(){
@@ -14,6 +17,37 @@ function clearForm(){
 //	document.scilab_eval_form.scilab_code.value="";
 //	document.scilab_output.value="";
 };
+$(document).ready(function(){
+	$("a#single_image").fancybox();
+
+  $("#execute").click(function(){
+    $("#execute").attr("value","Executing.....");
+    	$("#single_image").attr("href","");
+		$("#image").attr("src","");
+		if ($('#gmode').is(':checked')){
+			val =1;
+		}
+		else{
+			val='';
+		}
+    $.ajax({
+      type: "POST",
+      url: "/scilab_evaluate",
+      data: { scilab_code: $("#scilab_code").val(),graphicsmode:val },
+      
+    }).done(function( msg ) {
+
+		$("#execute").attr("value","Execute");
+		$("#scilab_output").val(msg["output"]);
+		
+		if (msg["graph"]!=""){
+		$("#single_image").attr("href","graphs/1/"+msg["graph"]+".png");
+		$("#image").attr("src","graphs/1/"+msg["graph"]+".png");
+		$("#single_image").trigger("click")  ;
+ }
+    }); 
+  });
+})
 </script>
 <style type="text/css">
 body {background: #EED;font-family: sans-serif,Georgia, Times, "Times New Roman", serif; }
@@ -22,7 +56,9 @@ a:hover {color:green }
 a {text-decoration:none}
 </style>
 <link rel="stylesheet" href="public/css/default.css" type="text/css">
-<body><div id="dhtmlwindowholder">
+<body>
+	<div id ="image" style="display:none"><a id="single_image" href=""><img id="image" src=""></a></div>
+	<div id="dhtmlwindowholder">
 <span style="display: none;">.</span><div style="z-index: 100; width: 650px; visibility: visible; display: none; left: 177px; top: 79px;" class="dhtmlwindow" id="helpbox"><div class="drag-handle">Scilab On-line Help<div class="drag-controls"></div></div><div style="overflow: hidden; height: 350px; display: block;" class="drag-contentarea"><iframe src="" style="margin: 0pt; padding: 0pt; width: 100%; height: 100%;" name="_iframe-helpbox"></iframe></div><div style="display: block;" class="drag-statusarea"><div class="drag-resizearea" style="background: transparent url(resize.gif) no-repeat scroll right top; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous;">&nbsp;</div></div></div></div>
 
 
@@ -36,6 +72,7 @@ a {text-decoration:none}
 </div>
 <div style="width: 100%; color: black; font-size: 13px;" align="left"><font size="11">Scilab On Cloud</font> </div><br>
 <form method = "POST" action = "scilab_evaluate" name = "scilab_code_form"> 
+
 <table style="border: 2px groove white; font-size: 12px;" width="100%" bgcolor="#cccccc" border="1" bordercolor="#666666">
 <tbody>
 <tr><td><br>
@@ -44,13 +81,13 @@ a {text-decoration:none}
 <span> <strong>Input</strong> </span><br>
 
 <textarea wrap="off" style="margin: 5px; font-size: 15px; height: 150px; width: 400px; color: green; background-color: white;" rows="8" cols="35" id="scilab_code" name="scilab_code">{{input}}</textarea><br>
-<input style="cursor: pointer;" value="1" name="graphicsmode" type="checkbox">  Graphical Output(Generate PDF)   <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" id="execute" style="cursor: pointer;" border="1" title="Run Code" value="Execute">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id="clear" border="1" style="cursor: pointer;" title="Clear All" name='Clear All' value='Clear All'  onclick="clearForm()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Print Graphics output" onclick="printImg()">&nbsp;Download&nbsp;</button><br><br>
+<input name="graphicsmode" id="gmode" type="checkbox" style="cursor: pointer;" value="1" >  Graphical Output(Generate PDF)   <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="button" id="execute" style="cursor: pointer;" border="1" title="Run Code" value="Execute">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id="clear" border="1" style="cursor: pointer;" title="Clear All" name='Clear All' value='Clear All'  onclick="clearForm()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Print Graphics output" onclick="printImg()">&nbsp;Download&nbsp;</button><br><br>
 </form>
 </td>
 <td align="left">
 <span> <strong>Output:</strong>	</span><br>
-<textarea style="border: 2px inset gray; margin: 10px; overflow: auto; height: 200px; width: 500px; font-size: 15px; background-color: rgb(17, 17, 17); color: rgb(51, 208, 17);" wrap="off" rows="8" cols="15" id="scilab_output" name="scilab_output">{{output}}</textarea>
+<textarea style="border: 2px inset gray; margin: 10px; overflow: auto; height: 200px; width: 500px; font-size: 15px; background-color: rgb(17, 17, 17); color: rgb(51, 208, 17);" wrap="off" rows="8" cols="15" id="scilab_output" name="scilab_output"></textarea>
 </td>
 </tr>
 </tbody>
@@ -60,8 +97,5 @@ a {text-decoration:none}
 <br>
 
 Download links
-<br>
-{% for link in graphs %}
-<a href = "{{request.path}}/download/{{link}}">{{link}}</a>
-{% endfor %}
+<a id="download" href="download/graph">Download here</a>
 </body></html>

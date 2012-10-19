@@ -1,5 +1,6 @@
 import os
 import sys
+sys.path.append("/root/sciscipy-0.3.0")
 sys.path.append("/root/SANDBOX")
 sys.path.append("/root/SANDBOX/scilab_cloud")
 
