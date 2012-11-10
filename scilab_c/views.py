@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 import re
 import os
 from reportlab.pdfgen import canvas
-from datetime import datetime
+import datetime
 from reportlab.lib.units import inch
 from django.views.decorators.csrf import csrf_exempt
 def scilab_instances(request,scilab_code):
@@ -53,10 +53,17 @@ def scilab_new_evaluate(request):
     print "GARPHICSMODE",graphics_mode
     if not graphics_mode:
         print "No GRAPHS REQUIRED"
-        all_code = all_code + "\n quit;"
-        process = subprocess.Popen('scilab-cli -nb -nwni' ,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        cwd = "/root/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+        if not os.path.exists(cwd):
+            os.makedirs(cwd)
+        filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
+        
+        filetowrite = open(cwd+"/"+filename+".sce","w")
+        filetowrite.write(all_code)
+        filetowrite.close()
+        filetoread = cwd+"/"+filename+".sce"
+        process = subprocess.Popen('scilab-cli -nb -nwni -f '+filetoread ,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
         print all_code
-        process.stdin.write(all_code)
         #try:
 	soutput = process.communicate()[0]
         #soutsoutput.replace("\000b","")
@@ -71,14 +78,17 @@ def scilab_new_evaluate(request):
         #scilab_instances(request,all_code)
 
     original_code = all_code
+
     #print all_code
 
-    cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
-    cwdsf = cwd + "code.sce"
+    cwd = "/root/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+    filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
+    cwdsf = cwd +"/"+ filename +"-code.sce"
     if not os.path.exists(cwd):
         os.makedirs(cwd)
     f = open(cwdsf,"w")
-    graph = datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
+    user_id = str(request.session['user_id'])
+    graph = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
     all_code = "driver(\"PNG\");\n" + "\n xinit(\""+cwd+"/"+graph+".png\");\n" + all_code+ "\nxend();\n" + "\nquit();"
     f.write(all_code)
     f.close()
@@ -95,7 +105,7 @@ def scilab_new_evaluate(request):
     #p.terminate()
 
     #return render_to_response('../public/default.html',{'input':original_code,'uid':request.session['user_id'],'username':request.session['username'],'graphs':graphs,'output':out,'graph':'graph.png'})
-    return HttpResponse(json.dumps({"input":original_code,"output":out,"graph":graph}),'application/json')
+    return HttpResponse(json.dumps({"input":original_code,"output":out,"graph":graph,"user_id":user_id}),'application/json')
 
 """def scilab_evaluate(request):
 

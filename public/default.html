@@ -1,14 +1,204 @@
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="public/fancybox.css" media="screen" />
-<script type="text/javascript" src="public/jquery.js"></script>
-<script type="text/javascript" src="public/jquery.fancybox-1.3.4.js"></script>
-<script type="text/javascript" src="public/jquery.fancybox-1.3.4.pack.js"></script>
-<title>Scilab On Cloud</title>
-<h3> Welcome {{username}} </h3>
-<h3> Click <a href="/logout"> here </a>to logout</h3>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Scilab On Cloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="description" content="scilab-on-cloud">
+    <meta name="author" content="Saket Choudhary">
 
-<script type="text/javascript">
+    <!-- Le styles -->
+    <link href="public/css/fancybox.css" rel="stylesheet">
+    <link href="public/css/bootstrap.css" rel="stylesheet">
+    <link href="public/css/bootstrap-responsive.css" rel="stylesheet">
+    <style type="text/css">
+
+      /* Sticky footer styles
+      -------------------------------------------------- */
+
+      html,
+      body {
+        height: 100%;
+        /* The html and body elements cannot have any padding or margin. */
+      }
+
+      /* Wrapper for page content to push down footer */
+      #wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        margin: 0 auto -60px;
+      }
+
+      /* Set the fixed height of the footer here */
+      #push,
+      #footer {
+        height: 60px;
+      }
+      #footer {
+        background-color: #f5f5f5;
+      }
+
+      /* Lastly, apply responsive CSS fixes as necessary */
+      @media (max-width: 767px) {
+        #footer {
+          margin-left: -20px;
+          margin-right: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+
+
+
+      /* Custom page CSS
+      -------------------------------------------------- */
+      /* Not required for template or sticky footer method. */
+
+      .container {
+        width: auto;
+        max-width: 680px;
+      }
+      .container .credit {
+        margin: 20px 0;
+      }
+      .table th, .table td {
+		text-align: center;
+		}
+		#scilab_output{
+			background-color:rgb(17,17,17);
+			color: rgb(51, 208, 17);
+		}
+
+    </style>
+    <link href="public/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="http://twitter.github.com/bootstrap/assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-57-precomposed.png">
+ 
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="http://scilab-test.garudaindia.in/cloud/scilab_view">Scilab On Cloud</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li class="tool"><a href="#about" rel="tooltip" data-original-title="Run Scilba Codes FRom the Browser">About</a></li>
+              <li><a href="http://scilab-test.garudaindia.in/">Home</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+		<div class="row-fluid">
+			<div id ="image" style="display:none"><a id="single_image" href=""><img id="image" src=""></a></div>
+			<span class="span16"><br><br><br><br></span>
+			<table class="table">
+					<tr>
+						<td>Select Book:</td>
+						<td>
+							<select name="books" id="books"><option value="">Select a Book</option>
+							{% for key,value in all_books.items %}<option value="{{ key }}">{{value}}</option>{% endfor %}</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Select Chapter: </td>
+						<td>
+							<select name="choose-chapter" id="choose-chapter"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>Select Example:</td>
+						<td>
+							<select name="choose-example" id="choose-example"></select>
+						</td>
+						
+					</tr>
+			
+			</table>
+			<table class="table table-bordered">
+				
+					<tr>
+						<td>Input</td>
+						<td>Output</td>
+					</tr>
+					
+					<tr>
+						<td>
+							<textarea class="field span12"  rows="20" placeholder="Type your Scilab Code Here" id="scilab_code"></textarea>
+						</td>
+						<td>
+				
+							<textarea id="scilab_output" class="field span12" id="scilab_output" rows="20" placeholder=""></textarea>
+						</td>
+					</tr>
+					
+					<tr>
+						<td>
+							<input type="checkbox" id="gmode">&nbsp;Enable Graphics &nbsp; <br>
+							<input class="btn btn-small btn-primary" type="button" id="execute" value="Evaluate">
+<div id="graph-dwnld">Download<a id="download" href="">here</a></div>
+						</td>
+						<td></td>
+					
+					</tr>
+				
+			</table>
+            
+          </div>
+        </div>
+        
+
+    </div> <!-- /container -->
+    <div id="footer">
+      <div class="container-fluid">
+        <center>
+			<p class="muted credit">Developed By <a href="http://home.iitb.ac.in/~saket.kumar">Saket Choudhary</a> under the guidance of <a href="http://moudgalya.org">Prof. Kannan Moudgalya</a>.</p>
+		</center>
+      </div>
+    </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="public/js/jquery.js"></script>
+    <script src="public/js/jquery.fancybox-1.3.4.js"></script>
+    <script src="public/js/bootstrap-transition.js"></script>
+    <script src="public/js/jquery.fancybox-1.3.4.pack.js"></script>
+    <script src="public/js/bootstrap-alert.js"></script>
+    <script src="public/js/bootstrap-modal.js"></script>
+    <script src="public/js/bootstrap-dropdown.js"></script>
+    <script src="public/js/bootstrap-scrollspy.js"></script>
+    <script src="public/js/bootstrap-tab.js"></script>
+    <script src="public/js/bootstrap-tooltip.js"></script>
+    <script src="public/js/bootstrap-popover.js"></script>
+    <script src="public/js/bootstrap-button.js"></script>
+    <script src="public/js/bootstrap-collapse.js"></script>
+    <script src="public/js/bootstrap-carousel.js"></script>
+    <script src="public/js/bootstrap-typeahead.js"></script>
+	<script type="text/javascript">
 function clearForm(){
 	var input = document.getElementById("scilab_code");
 //	alert(input.value);
@@ -19,7 +209,50 @@ function clearForm(){
 };
 $(document).ready(function(){
 	$("a#single_image").fancybox();
+	$("#graph-dwnld").hide();
+$("#choose-chapter").on("change", function(event){
+//alert($("#choose-chapter").val());
 
+id = $("#choose-chapter").val();
+$.ajax({
+type: "POST",
+data: {id : id},
+url: "/cloud/get_examples",
+
+}).done(function(msg){
+//alert(msg["data"]);
+$("#choose-example").find('option').remove().end().html(msg["data"]);
+});
+});
+$("#choose-example").on("change", function(event){
+//alert($("#choose-chapter").val());
+
+example = $("#choose-example").val();
+chapter = $("#choose-chapter").val();
+folder = $("#books").val()
+$.ajax({
+type: "POST",
+data: {example : example,chapter:chapter,folder:folder},
+url: "/cloud/get_code",
+
+}).done(function(msg){
+//alert(msg["data"]);
+$("#scilab_code").val(msg["input"]);
+});
+});
+$("#books").change(function(){
+id = $("#books").val();
+$.ajax({
+type: "POST",
+data: {id : id},
+url: "/cloud/get_chapters",
+
+}).done(function(msg){
+//alert(msg["data"]);
+
+$("#choose-chapter").find('option').remove().end().append(msg["data"]);
+});
+});
   $("#execute").click(function(){
     $("#execute").attr("value","Executing.....");
     	$("#single_image").attr("href","");
@@ -32,7 +265,7 @@ $(document).ready(function(){
 		}
     $.ajax({
       type: "POST",
-      url: "/scilab_evaluate",
+      url: "/cloud/scilab_evaluate",
       data: { scilab_code: $("#scilab_code").val(),graphicsmode:val },
       
     }).done(function( msg ) {
@@ -41,61 +274,17 @@ $(document).ready(function(){
 		$("#scilab_output").val(msg["output"]);
 		
 		if (msg["graph"]!=""){
-		$("#single_image").attr("href","graphs/1/"+msg["graph"]+".png");
-		$("#image").attr("src","graphs/1/"+msg["graph"]+".png");
+		$("#single_image").attr("href","graphs/"+msg["user_id"]+"/"+msg["graph"]+".png");
+		$("#image").attr("src","graphs/"+msg["user_id"]+"/"+msg["graph"]+".png");
+		$("#download").attr("href","download/"+msg["graph"]);
+		$("#graph-dwnld").show();
 		$("#single_image").trigger("click")  ;
  }
     }); 
   });
 })
 </script>
-<style type="text/css">
-body {background: #EED;font-family: sans-serif,Georgia, Times, "Times New Roman", serif; }
-table {background: #CCCCCC;}
-a:hover {color:green }
-a {text-decoration:none}
-</style>
-<link rel="stylesheet" href="public/css/default.css" type="text/css">
-<body>
-	<div id ="image" style="display:none"><a id="single_image" href=""><img id="image" src=""></a></div>
-	<div id="dhtmlwindowholder">
-<span style="display: none;">.</span><div style="z-index: 100; width: 650px; visibility: visible; display: none; left: 177px; top: 79px;" class="dhtmlwindow" id="helpbox"><div class="drag-handle">Scilab On-line Help<div class="drag-controls"></div></div><div style="overflow: hidden; height: 350px; display: block;" class="drag-contentarea"><iframe src="" style="margin: 0pt; padding: 0pt; width: 100%; height: 100%;" name="_iframe-helpbox"></iframe></div><div style="display: block;" class="drag-statusarea"><div class="drag-resizearea" style="background: transparent url(resize.gif) no-repeat scroll right top; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous;">&nbsp;</div></div></div></div>
 
+  
 
-<center>
-<div id="gwindow" style="border: 2px outset lightgray; width: 616px; height: 437px; position: absolute; background-color: rgb(204, 204, 204); left: 30%; top: 5%; visibility: hidden;">
-<div style="width: 100%; height: 22px; background-color: rgb(204, 204, 204);" align="right"><img id="gmaxbutton" style="cursor: pointer; top: 4px; position: relative;"  onclick="maxminimize()" title="Minimize"></div>
-<div id="gcontent" style="overflow: auto; width: 596px; height: 397px;">
-</div>
-</div>
-<div id="message" class="drag" style="border: 2px ridge black; background: white none repeat scroll 0% 0%; overflow: auto; position: absolute; top: 0.2%; right: 0.2%; margin-left: -100px; font-size: 12px; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; width: 150px; height: 35px; visibility: hidden;">
-</div>
-<div style="width: 100%; color: black; font-size: 13px;" align="left"><font size="11">Scilab On Cloud</font> </div><br>
-<form method = "POST" action = "scilab_evaluate" name = "scilab_code_form"> 
-
-<table style="border: 2px groove white; font-size: 12px;" width="100%" bgcolor="#cccccc" border="1" bordercolor="#666666">
-<tbody>
-<tr><td><br>
-
-<br><br>
-<span> <strong>Input</strong> </span><br>
-
-<textarea wrap="off" style="margin: 5px; font-size: 15px; height: 150px; width: 400px; color: green; background-color: white;" rows="8" cols="35" id="scilab_code" name="scilab_code">{{input}}</textarea><br>
-<input name="graphicsmode" id="gmode" type="checkbox" style="cursor: pointer;" value="1" >  Graphical Output(Generate PDF)   <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="button" id="execute" style="cursor: pointer;" border="1" title="Run Code" value="Execute">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id="clear" border="1" style="cursor: pointer;" title="Clear All" name='Clear All' value='Clear All'  onclick="clearForm()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="clear" border="1" style="cursor: pointer;" title="Print Graphics output" onclick="printImg()">&nbsp;Download&nbsp;</button><br><br>
-</form>
-</td>
-<td align="left">
-<span> <strong>Output:</strong>	</span><br>
-<textarea style="border: 2px inset gray; margin: 10px; overflow: auto; height: 200px; width: 500px; font-size: 15px; background-color: rgb(17, 17, 17); color: rgb(51, 208, 17);" wrap="off" rows="8" cols="15" id="scilab_output" name="scilab_output"></textarea>
-</td>
-</tr>
-</tbody>
-</table>
-</center>
-<iframe src="" name="iFrame1" id="iFrame1" style="display: none;"></iframe>
-<br>
-
-Download links
-<a id="download" href="download/graph">Download here</a>
 </body></html>
