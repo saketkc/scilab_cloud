@@ -45,7 +45,7 @@ def scilab_new_evaluate(request):
 
         return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
     all_code = request.POST.get('scilab_code')
-    filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s")
+    filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s|host|newfun|execstr")
     if  (filter_for_system.findall(all_code)):
         return HttpResponse(json.dumps({'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''  }),'application/json')
     print request.POST
@@ -53,11 +53,11 @@ def scilab_new_evaluate(request):
     print "GARPHICSMODE",graphics_mode
     if not graphics_mode:
         print "No GRAPHS REQUIRED"
-        cwd = "/root/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+        cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
         if not os.path.exists(cwd):
             os.makedirs(cwd)
         filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
-        
+        all_code  = all_code +"\n quit();"
         filetowrite = open(cwd+"/"+filename+".sce","w")
         filetowrite.write(all_code)
         filetowrite.close()
@@ -81,7 +81,7 @@ def scilab_new_evaluate(request):
 
     #print all_code
 
-    cwd = "/root/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+    cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
     filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
     cwdsf = cwd +"/"+ filename +"-code.sce"
     if not os.path.exists(cwd):
@@ -179,7 +179,7 @@ def download(request,graphname):
 	response = HttpResponse(mimetype='application/pdf')
 	response['Content-Disposition'] = 'attachment; filename='+str(graphname)+'.pdf'
 	p = canvas.Canvas(response)
-	cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])+"/"
+	cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])+"/"
 	p.drawImage(cwd+str(graphname)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
         p.showPage()
  	p.save()
