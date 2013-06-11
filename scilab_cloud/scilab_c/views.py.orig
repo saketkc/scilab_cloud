@@ -1,0 +1,295 @@
+import subprocess
+import simplejson as json
+from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+import MySQLdb as mdb
+import re
+import os
+from reportlab.pdfgen import canvas
+import datetime
+from reportlab.lib.units import inch
+from django.views.decorators.csrf import csrf_exempt
+from collections import OrderedDict
+def scilab_instances(request,scilab_code):
+    process = subprocess.Popen(['scilab-cli -nb -nwni -e '+scilab_code],shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    output = output.strip()
+    print output
+    return HttpResponse(json.dumps({"input":scilab_code,"output":output,"graph":""}))
+
+    """if first_time:
+        scilab_instance = pexpect.spawn('scilab-cli -nb -nwni')
+        scilab_instance.expect('-->')
+        request.session['scilab'] = scilab_instance
+    else:
+        scilab_instance = request.session['scilab']
+	output = ""
+	for i in range(0,len(scilab_code)):
+		print scilab_code[i]
+		scilab_instance.sendline(str(scilab_code[i]))
+		scilab_instance.expect('-->')
+		output = output + str(scilab_instance.before.replace("\r\n\x1b[?1h\x1b=","").replace("\r\n\x1b[?1l\x1b>","").replace(str(scilab_code[i]),""))
+	output.replace(all_code,"")
+	return output"""
+
+
+def default_view(request):
+	try:
+		user_id = request.session['user_id']
+	except:
+		return HttpResponseRedirect("/login")
+	all_books={}
+	books=[]
+	books_id=[]
+	con = mdb.connect("localhost","root","fedora13","scilab")
+	with con:
+		cur = con.cursor()
+		query = "SELECT id,book,author FROM  textbook_companion_preference where approval_status=1 ORDER BY book ASC"
+		cur.execute(query)
+		rows = cur.fetchall()
+		for row in rows:
+			if row[1]!="" and row[2]!="":
+				all_books[row[0]]=row[1].replace("  "," ")+"(" + row[2].replace("  "," ")+")"
+	d_sorted_by_value = OrderedDict(sorted(all_books.items(), key=lambda x: x[1]))
+	return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':user_id,'username':request.session['username'],'all_books':d_sorted_by_value})
+@csrf_exempt
+def scilab_new_evaluate(request):
+    if request.method =="GET":
+
+        return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
+    all_code = request.POST.get('scilab_code')
+    all_code = all_code.replace("clc;","")
+    #all_code_splitted = all_code.rstrip().split('\n')
+    variables = ["a","b"]
+    i=0
+    """while i<len(all_code_splitted):
+        code = all_code_splitted[i]
+        equal_to_split = code.split('=')
+        skip=False
+        if len(equal_to_split)>1:
+            if equal_to_split[0].startswith("function"):
+                while not equal_to_split[0].startswith("endfunction"):
+                    code=all_code_splitted[i]
+                    equal_to_split=code.split("=")      
+                    i=i+1
+            else:            
+                variables.append(equal_to_split[0])
+        i+=1
+
+    append_content=""
+    for var in variables:
+        append_content+="disp("+var+");\n" """
+      
+
+    try:
+        user=request.POST.get('external_user')
+        request.session['user_id']='3'
+    except:
+        print "do notbhing"
+    filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s|host|newfun|execstr|ascii|mputl|dir\(\)")
+    if  (filter_for_system.findall(all_code)):
+        return HttpResponse(json.dumps({'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''  }),'application/json')
+    print request.POST
+    graphics_mode = request.POST.get('graphicsmode')
+    print "GARPHICSMODE",graphics_mode
+    if not graphics_mode:
+        print "No GRAPHS REQUIRED"
+        cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+        if not os.path.exists(cwd):
+            os.makedirs(cwd)
+        filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
+        all_code  = all_code +"\n"+append_content+"\n quit();"
+        filetowrite = open(cwd+"/"+filename+".sce","w")
+        filetowrite.write(all_code)
+        filetowrite.close()
+        filetoread = cwd+"/"+filename+".sce"
+        process = subprocess.Popen('scilab-cli -nb -nwni -f '+filetoread ,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+        print all_code
+        #try:
+	soutput = process.communicate()[0]
+        #soutsoutput.replace("\000b","")
+        soutput = soutput.strip()
+        #    signal.alarm(0)
+        #except:
+        #    soutput ="Taking too long . Maybe there was an error"
+        
+        sendout= "Results are displayed in this order :" + "=,".join(variables) +"\n\n\n"+soutput
+        print soutput
+
+        return HttpResponse(json.dumps({"input":all_code,"output":sendout,"graph":""}),'application/json')
+        #scilab_instances(request,all_code)
+
+    original_code = all_code
+
+    #print all_code
+
+    cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
+    filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
+    cwdsf = cwd +"/"+ filename +"-code.sce"
+    if not os.path.exists(cwd):
+        os.makedirs(cwd)
+    f = open(cwdsf,"w")
+    user_id = str(request.session['user_id'])
+    graph = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
+    all_code = "driver(\"PNG\");\n" + "\n xinit(\""+cwd+"/"+graph+".png\");\n" + all_code+ "\nxend();\n" + "\nquit();"
+    f.write(all_code)
+    f.close()
+    p=subprocess.Popen("/opt/scilab/bin/scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+#    try:
+    out, err = p.communicate()
+    sendout= "Results are displayed in this order :" + "=,".join(variables) +"\n\n\n"+out
+ #   signal.alarm(0)
+  #  except:
+   #     out="Taking too long. Maybe ther was an errror"
+    print out
+
+    #print 'proc1\'s pid =',p.pid
+    #time.sleep(2)
+    #p.terminate()
+
+    #return render_to_response('../public/default.html',{'input':original_code,'uid':request.session['user_id'],'username':request.session['username'],'graphs':graphs,'output':out,'graph':'graph.png'})
+    return HttpResponse(json.dumps({"input":original_code,"output":sendout,"graph":graph,"user_id":user_id}),'application/json')
+
+"""def scilab_evaluate(request):
+
+	try:
+		user_id = request.session['user_id']
+	except:
+		return HttpResponseRedirect("/cloud")
+        all_code = request.POST.get('scilab_code')
+        if not all_code:
+		return HttpResponseRedirect("/scilab_view")
+	all_code = all_code.replace(" ","")
+	graphics_mode = request.POST.get('graphicsmode')
+	all_code = all_code.replace("//Type Code Here","")
+	filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s")
+	if not (filter_for_system.findall(all_code)):
+			split_code = all_code.split()
+			plot_filter = re.compile("plot2d\(.*\)")
+			function_filter = re.compile("deff\(.*\)")
+			variable =[]
+			expression = []
+			the_data_set = {}
+			output = ""
+			the_variable = ""
+			graphs = []
+			links = []
+			for i in range(0,len(split_code)):
+				plot_data = plot_filter.findall(split_code[i])
+				function_data = function_filter.findall(split_code[i])
+				if function_data:
+					#a=sciscipy.eval(split_code[i])
+					#re_fnname = re.compile("\[.*\]=.*\(.*,.\)")
+					#fn_data = re_fnname.findall(split_code[i])
+					return_variables = scilab_instances(split_code,all_code)
+					#eval("function_name = fn_data[0].split('=')[1]")
+					return render_to_response('default.html',{'input':all_code,             'output':return_variables , 'username':request.session['username']})
+					#return_variables = eval('sci.function_name')
+					#print return_variables
+					#return HttpResponse(return_variables)
+				split_more = split_code[i].split("=")
+				if (len(split_more)>1):
+					expression.append(split_more[1])
+					evaluated_code = sciscipy.eval(split_code[i])
+					the_variable = split_code[i].split("=")[0]
+					the_variable_value =  sciscipy.read(the_variable)
+					the_data_set[the_variable] = the_variable_value
+					output = output +str(the_variable) + " =\n " + "    " + str(the_variable_value) + "\n"
+				if plot_data:
+					coordinates = plot_data[0].split("(")[1].split(")")[0].split(",")
+					x=coordinates[0]
+					y=coordinates[1]
+					plt.plot(the_data_set[x],the_data_set[y])
+		           	        graphs.append('simple_plot' + str(i))
+					cwd = str(os.getcwd()) + "/graphs/" + str(request.session['user_id'])
+					cwdsf = cwd + str(graphs[-1])
+					if not os.path.exists(cwd):
+					    os.makedirs(cwd)
+					plt.savefig(cwdsf)
+			for graph in graphs:
+				p = canvas.Canvas(cwd+str(graph)+".pdf",pagesize=letter)
+				links.append(str(request.META['SERVER_NAME'])+":"+str(request.META['SERVER_PORT']) + str(graph))
+                        	p.drawImage(cwd+str(graph)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
+                       		p.showPage()
+	                   	p.save()
+			return render_to_response('default.html',{'input':all_code,  		'output':output , "graphs":graphs,'username':request.session['username'],"links":links})
+        else:
+		return render_to_response('default.html',{'input':all_code,'output':"error"})
+
+
+"""
+def download(request,graphname):
+	response = HttpResponse(mimetype='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename='+str(graphname)+'.pdf'
+	p = canvas.Canvas(response)
+	cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])+"/"
+	p.drawImage(cwd+str(graphname)+".png", 1*inch,1*inch, width=5*inch,height=5*inch,mask=None)
+        p.showPage()
+ 	p.save()
+        return response
+@csrf_exempt
+def get_chapters(request):
+	book_id = request.POST.get('id')
+	all_examples="<option value=''>Select a Chapter </option>"
+	con = mdb.connect("localhost","root","fedora13","scilab")
+	with con:
+		cur = con.cursor()
+		query = "SELECT id,number,name FROM  textbook_companion_chapter where preference_id="+book_id+" ORDER BY number ASC"
+		cur.execute(query)
+		rows = cur.fetchall()
+		for row in rows:
+			if row[1]!="":
+				all_examples=all_examples+"<option value='"+str(row[0])+"'>"+str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")+"</option>"
+	response_data={}
+	response_data["data"]=all_examples
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+
+@csrf_exempt
+def get_examples(request):
+	book_id = request.POST.get('id')
+	all_examples="<option value=''>Select an Example</option>"
+	con = mdb.connect("localhost","root","fedora13","scilab")
+	with con:
+		cur = con.cursor()
+		query = "SELECT id,number,caption FROM  textbook_companion_example where chapter_id="+book_id+" ORDER BY number ASC"
+		cur.execute(query)
+		rows = cur.fetchall()
+		for row in rows:
+			if row[1]!="":
+				all_examples=all_examples+"<option value='"+str(row[1])+"'>"+str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")+"</option>"
+	response_data={}
+	response_data["data"]=all_examples
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
+
+@csrf_exempt
+def get_code(request):
+	example = request.POST.get('example')
+	chapter = "CH"+example.split(".")[0]
+	folder = request.POST.get('folder')
+	content=""
+	con = mdb.connect("localhost","root","fedora13","scilab")
+	with con:
+		cur = con.cursor()
+		query = "SELECT filepath FROM textbook_companion_dependency_files where preference_id="+folder
+		cur.execute(query)
+		rows = cur.fetchall()
+		for row in rows:
+			f=open("/var/www/scilab_in/uploads/"+row[0],'r')
+			
+			content+=f.read()
+			print query
+			f.close()
+		os.chdir("/var/www/scilab_in/uploads/"+folder+"/"+chapter+"/"+"EX"+example+"/")
+		for files in os.listdir("."):
+			if files.endswith(".sce") or files.endswith(".sci"):
+				f=open(files,'r')
+				content += f.read()
+				f.close()
+	response_data={}
+	response_data["input"]=content	
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
+			
+
+		
