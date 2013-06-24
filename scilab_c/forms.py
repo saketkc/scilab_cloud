@@ -1,5 +1,6 @@
 from django import forms
-class ScilabForm(forms.Form):
-	scilab_code = forms.TextField(required=True)
-    graphicsmode = forms.CheckboxInput()
-
+class DocumentForm(forms.Form):
+    docfile = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes'
+    )

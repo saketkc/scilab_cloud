@@ -13,70 +13,16 @@ import datetime
 from reportlab.lib.units import inch
 from django.views.decorators.csrf import csrf_exempt
 from collections import OrderedDict
+api_keys=['zdFmTjX98.']
+def scilab_instances(request,scilab_code):
+    process = subprocess.Popen(['scilab-cli -nb -nwni -e '+scilab_code],shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    output = output.strip()
+    print output
+    return HttpResponse(json.dumps({"input":scilab_code,"output":output,"graph":""}))
 
-api_keys={'scilab':'zdFmTjX98.'}
-@csrf_exempt
-def upload_file(request):
-	if request.method=="GET":
-		return render_to_response('../public/upload.html')
 
-    	try:
-        	uploaded_file = request.FILES['scilab_code']
-	        filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
-	        cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + "3"
-        	if not os.path.exists(cwd):
-	            os.makedirs(cwd)
-       
-        	filetowrite = open(cwd+"/"+filename+".sce","wb+")
-		filetowrite.write("mode(2);\n")
-
-		for chunks in uploaded_file.chunks():
-			filetowrite.write(chunks)
-	
-		filetowrite.write("\nquit;")	        
-	        filetowrite.close()
-        	filetoread = cwd+"/"+filename+".sce"
-	        p=subprocess.Popen("scilab-cli -nb -nwni -f "+ filetoread , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        	out, err = p.communicate()
-		try:
-			from_web = request.POST.get('from_web')
-		except: 	
-			from_web = None
-		if from_web:
-			return render_to_response('../public/upload.html',{'output':out})
-		else:
-			
-			try:
-				api_user = request.POST.get('api_user')
-			except:
-				api_user = None
-			try:
-				api_key = request.POST.get('api_key')
-			except:
-				api_key = None
-			if api_user not in api_keys.keys():
-				return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
-			elif api_key!= api_keys[api_user]:
-				
-				return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
-	        return HttpResponse(json.dumps({"response":{"input":"original_code","output":out,"graph":"","user_id":"3"},"type":{"code":"200","description":"success"}}),'application/json')
-	except:
-		return HttpResponse(json.dumps({"response":{},"message":{"code":"500","description":"error running code"}}),"application/json")
-@csrf_exempt
 def get_books(request):
-	try:
-		api_user = request.POST.get('api_user')
-	except:
-		api_user = None
-	try:
-		api_key = request.POST.get('api_key')
-	except:
-		api_key = None
-	if api_user not in api_keys.keys():
-		return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
-	elif api_key!= api_keys[api_user]:
-			
-		return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
 	all_books={}
 	books=[]
 	books_id=[]
@@ -95,7 +41,7 @@ def get_books(request):
 				all_books[r0]=r1.replace("  "," ").replace("\\xa0","")+"(" + r2.replace(u'\\xa0',u' ').replace(u'\\xc7',u' ')+")"
 
 	d_sorted_by_value = OrderedDict(sorted(all_books.items(), key=lambda x: x[1]))
-	return HttpResponse(json.dumps({"response":{"books":(d_sorted_by_value)},"message":{"code":"200","description":"success"}}),"application/json")
+	return HttpResponse(json.dumps({"books":(d_sorted_by_value)}),"application/json")
 
 def default_view(request):
 	try:
@@ -124,28 +70,16 @@ def scilab_new_evaluate(request):
         api_key = request.POST.get('api_key')
     except:
         api_key = None
-    try:
-	api_user = request.POST.get('api_user')
-    except:
-	api_user = None
-	
-    if api_user not in api_keys.keys():
-        return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
-    elif api_key!= api_keys[api_user]:
-        return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
+    if api_key not in api_keys:
+        return HttpResponse(json.dumps({"response":"error","message":"Not accesible"}))
+
+   # elif str(current_site)!="http://scilab-test.garudaindia.in/cloud/scilab_evaluate":
+    #    print current_site,"#####"
     
     if request.method =="GET":
 
         return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
-
-    
-    try:
-        all_code = request.POST.get('scilab_code')
-    except:
-        all_code = None
-    if  not all_code:
-        return HttpResponse(json.dumps({"response":{},"message":{"code":"500","description":"API user not defined"}}),"application/json")
-        
+    all_code = request.POST.get('scilab_code')
     all_code = all_code.replace("clc;","")
     all_code = all_code.replace("clear;","")
     all_code = all_code.replace("clear all;","")
@@ -157,7 +91,7 @@ def scilab_new_evaluate(request):
         print "do notbhing"
     filter_for_system = re.compile("unix_g|unix_x|unix_w|unix_s|host|newfun|execstr|ascii|mputl|dir\(\)")
     if  (filter_for_system.findall(all_code)):
-        return HttpResponse(json.dumps({"response":{'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''} , "type":{"code":"500","description":"system commands are disabled" }}),'application/json')
+        return HttpResponse(json.dumps({'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''  }),'application/json')
     graphics_mode = request.POST.get('graphicsmode')
     if not graphics_mode:
         cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
@@ -172,7 +106,7 @@ def scilab_new_evaluate(request):
         process = subprocess.Popen('scilab-cli -nb -nwni -f '+filetoread ,shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 	soutput = process.communicate()[0]
         soutput = soutput.strip()
-        return HttpResponse(json.dumps({"response":{"input":all_code,"output":soutput,"graph":""},"type":{"code":"200","description":"success"}}),'application/json')
+        return HttpResponse(json.dumps({"input":all_code,"output":soutput,"graph":""}),'application/json')
 
     original_code = all_code
     cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
@@ -188,7 +122,7 @@ def scilab_new_evaluate(request):
     f.close()
     p=subprocess.Popen("/opt/scilab/bin/scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     out, err = p.communicate()
-    return HttpResponse(json.dumps({"response":{"input":original_code,"output":out,"graph":graph,"user_id":user_id},"type":{"code":"200","description":"success"}}),'application/json')
+    return HttpResponse(json.dumps({"input":original_code,"output":out,"graph":graph,"user_id":user_id}),'application/json')
 
 def download(request,graphname):
 	response = HttpResponse(mimetype='application/pdf')
@@ -202,8 +136,7 @@ def download(request,graphname):
 @csrf_exempt
 def get_chapters(request):
 	book_id = request.POST.get('id')
-	all_examples = []
-#	all_examples="<option value=''>Select a Chapter </option>"
+	all_examples="<option value=''>Select a Chapter </option>"
 	con = mdb.connect("localhost","root","fedora13","scilab")
 	with con:
 		cur = con.cursor()
@@ -212,16 +145,16 @@ def get_chapters(request):
 		rows = cur.fetchall()
 		for row in rows:
 			if row[1]!="":
-				all_examples.append({"value":str(row[0]), "name":str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")})
+				all_examples=all_examples+"<option value='"+str(row[0])+"'>"+str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")+"</option>"
 	response_data={}
 	response_data["data"]=all_examples
-	return HttpResponse(json.dumps({"response":{"data":all_examples},"type":{"code":"200","description":"success"}}), mimetype="application/json")
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 
 @csrf_exempt
 def get_examples(request):
 	book_id = request.POST.get('id')
-	all_examples=[]#"<option value=''>Select an Example</option>"
+	all_examples="<option value=''>Select an Example</option>"
 	con = mdb.connect("localhost","root","fedora13","scilab")
 	with con:
 		cur = con.cursor()
@@ -230,12 +163,10 @@ def get_examples(request):
 		rows = cur.fetchall()
 		for row in rows:
 			if row[1]!="":
-				all_examples.append({"value":str(row[1]), "name":str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")})
+				all_examples=all_examples+"<option value='"+str(row[1])+"'>"+str(row[1]).replace("  "," ")+". " + str(row[2]).replace("  "," ")+"</option>"
 	response_data={}
 	response_data["data"]=all_examples
-	return HttpResponse(json.dumps({"response":{"data":all_examples},"type":{"code":"200","description":"success"}}), mimetype="application/json")
-
-	#return HttpResponse(json.dumps(response_data), mimetype="application/json")
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
 @csrf_exempt
 def get_code(request):
@@ -263,9 +194,7 @@ def get_code(request):
 				f.close()
 	response_data={}
 	response_data["input"]=content	
-	return HttpResponse(json.dumps({"response":{"data":content},"type":{"code":"200","description":"success"}}), mimetype="application/json")
-
-	#return HttpResponse(json.dumps(response_data), mimetype="application/json")
+	return HttpResponse(json.dumps(response_data), mimetype="application/json")
 			
 
 		

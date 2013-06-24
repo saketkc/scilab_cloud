@@ -99,6 +99,13 @@
   })();
 
 </script> 
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
   </head>
 
   <body>
@@ -122,34 +129,42 @@
         </div>
       </div>
     </div>
-<div class="container-fluid">
-<div class="row-fluid">
-<br/><br/><br/><br/><br/>
-    <form class="form-horizontal" method="POST" action="/cloud/login/">
-    <div class="control-group">
-    <label class="control-label" for="inputEmail">Email</label>
-    <div class="controls">
-    <input type="text" id="inputEmail" placeholder="Username" name="username">
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label" for="inputPassword">Password</label>
-    <div class="controls">
-    <input type="password" id="inputPassword" placeholder="Password" name="password">
-    </div>
-    </div>
-    <div class="control-group">
-    <div class="controls">
-    <button type="submit" class="btn">Sign in</button>
-    </div>
-    </div>
-    </form>
-</div>
-</div>
 
-<br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/>
+    <div class="container-fluid">
+		<div class="row-fluid">
+			<div id ="image" style="display:none"><a id="single_image" href=""><img id="image" src=""></a></div>
+			<span class="span16"><br><br><br><br></span>
+<fieldset>
+<b>NOTE:</b> Graphics module is not supported.
+							<form method="POST" action="/cloud/upload" enctype="multipart/form-data">
+<input class="field span12"  type="file" name="scilab_code">
+<input type="hidden" name="from_web" value="true">
+<br/><br/>
+<input class="btn btn-small btn-primary" type="submit" value="Evaluate">
+</form>
+</fieldset>
+<br/>
+			<table class="table table-bordered">
+				
+					<tr>
+						<td>Output</td>
+					</tr>
+					
+					<tr>
+						<td>
+				
+							<textarea id="scilab_output" class="field span12" id="scilab_output" rows="20" placeholder="">{{output}}</textarea>
+						</td>
+					</tr>
+					
+				
+			</table>
+            
+          </div>
+        </div>
+        
+
+    </div> <!-- /container -->
     <div id="footer">
       <div class="container-fluid">
         <center>
@@ -158,6 +173,4 @@
       </div>
     </div>
 
-</body>
-</html>
-
+</body></html>
