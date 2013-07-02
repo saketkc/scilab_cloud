@@ -149,7 +149,7 @@ def scilab_new_evaluate(request):
     all_code = all_code.replace("clc;","")
     all_code = all_code.replace("clear;","")
     all_code = all_code.replace("clear all;","")
-    all_code = "mode(2)\n"+all_code
+    all_code = "mode(2)\nlines(0) \n"+all_code
     try:
         user=request.POST.get('external_user')
         request.session['user_id']='3'
