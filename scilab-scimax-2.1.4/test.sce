@@ -1,6 +1,5 @@
 exec loader.sce
-maxinit
-Syms xv Qf Qo Cf Co V Qw Kv 
+Syms xv Qf Qo Cf Co V Qw Kv t s
 Qo=Qw+Qf;
 // rate of salt inflow
 mi=Qf*Cf;
@@ -18,7 +17,7 @@ G*diff(Co,t)+Co=K*xv;
 G*s*Co+Co=K*xv;
 // transfer function= Co/xv
 Co/xv=K/(G*s+1);
-
+quit();
 
 //s=%s;
 //Syms k

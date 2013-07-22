@@ -26,26 +26,26 @@ def upload_file(request):
 	        cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + "3"
         	if not os.path.exists(cwd):
 	            os.makedirs(cwd)
-       
+
         	filetowrite = open(cwd+"/"+filename+".sce","wb+")
 		filetowrite.write("mode(2);\n")
 
 		for chunks in uploaded_file.chunks():
 			filetowrite.write(chunks)
-	
-		filetowrite.write("\nquit;")	        
+
+		filetowrite.write("\nquit;")
 	        filetowrite.close()
         	filetoread = cwd+"/"+filename+".sce"
 	        p=subprocess.Popen("scilab-cli -nb -nwni -f "+ filetoread , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         	out, err = p.communicate()
 		try:
 			from_web = request.POST.get('from_web')
-		except: 	
+		except:
 			from_web = None
 		if from_web:
 			return render_to_response('../public/upload.html',{'output':out})
 		else:
-			
+
 			try:
 				api_user = request.POST.get('api_user')
 			except:
@@ -57,7 +57,7 @@ def upload_file(request):
 			if api_user not in api_keys.keys():
 				return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
 			elif api_key!= api_keys[api_user]:
-				
+
 				return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
 	        return HttpResponse(json.dumps({"response":{"input":"original_code","output":out,"graph":"","user_id":"3"},"type":{"code":"200","description":"success"}}),'application/json')
 	except:
@@ -75,7 +75,7 @@ def get_books(request):
 	if api_user not in api_keys.keys():
 		return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
 	elif api_key!= api_keys[api_user]:
-			
+
 		return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
 	all_books={}
 	books=[]
@@ -118,7 +118,7 @@ def default_view(request):
 	return render_to_response('../public/default.html',{'input':'Type Code Here','uid':user_id,'username':request.session['username'],'all_books':d_sorted_by_value})
 @csrf_exempt
 def scilab_new_evaluate(request):
-    
+
     current_site = HttpRequest.build_absolute_uri(request)
     try:
         api_key = request.POST.get('api_key')
@@ -128,24 +128,24 @@ def scilab_new_evaluate(request):
 	api_user = request.POST.get('api_user')
     except:
 	api_user = None
-	
+
     if api_user not in api_keys.keys():
         return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
     elif api_key!= api_keys[api_user]:
         return HttpResponse(json.dumps({"response":{},"message":{"error":"401","description":"API key does not match"}}),"application/json")
-    
+
     if request.method =="GET":
 
         return render_to_response('../public/default.html',{'input':'//Type Code Here','uid':request.session['user_id'],'username':request.session['username']})
 
-    
+
     try:
         all_code = request.POST.get('scilab_code')
     except:
         all_code = None
     if  not all_code:
         return HttpResponse(json.dumps({"response":{},"message":{"code":"500","description":"API user not defined"}}),"application/json")
-        
+
     all_code = all_code.replace("clc;","")
     all_code = all_code.replace("clear;","")
     all_code = all_code.replace("clear all;","")
@@ -159,7 +159,8 @@ def scilab_new_evaluate(request):
     if  (filter_for_system.findall(all_code)):
         return HttpResponse(json.dumps({"response":{'input':'System commnads are not supported','uid':request.session['user_id'],'username':request.session['username'],'output':'System commands are disabled','graph':'','graphs':''} , "type":{"code":"500","description":"system commands are disabled" }}),'application/json')
     graphics_mode = request.POST.get('graphicsmode')
-    if not graphics_mode:
+    ## Bad hacking here
+    if not True:
         cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
         if not os.path.exists(cwd):
             os.makedirs(cwd)
@@ -175,20 +176,32 @@ def scilab_new_evaluate(request):
         return HttpResponse(json.dumps({"response":{"input":all_code,"output":soutput,"graph":""},"type":{"code":"200","description":"success"}}),'application/json')
 
     original_code = all_code
+    syms_loader="/home/cfduser/scilab_cloud/scilab-scimax-2.1.4/loader.sce"
     cwd = "/home/cfduser/SANDBOX/scilab_cloud" + "/graphs/" + str(request.session['user_id'])
     filename=datetime.datetime.now().strftime("%Y-%m-%d%H-%M-%S")
     cwdsf = cwd +"/"+ filename +"-code.sce"
     if not os.path.exists(cwd):
         os.makedirs(cwd)
     f = open(cwdsf,"w")
+    ## Yet another hack for syms -> Syms !
+    all_new_code = re.sub(r'syms\s+','Syms ', all_code)
+	
     user_id = str(request.session['user_id'])
     graph = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
-    all_code = "driver(\"PNG\");\n" + "\n xinit(\""+cwd+"/"+graph+".png\");\n" + all_code+ "\nxend();\n" + "\nquit();"
-    f.write(all_code)
+    if all_new_code!=all_code:
+        write_code = "driver(\"PNG\");\n" + "\nxinit(\""+cwd+"/"+graph+".png\");\n" + "exec " + syms_loader + ";\nmode(2);\n" + all_new_code+ "\nxend();\n" + "\nquit();"
+    else:
+        
+        write_code = "driver(\"PNG\");\n" + "\nxinit(\""+cwd+"/"+graph+".png\");\nmode(2);\n" + all_new_code+ "\nxend();\n" + "\nquit();"
+    f.write(write_code)
     f.close()
-    p=subprocess.Popen("/opt/scilab/bin/scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    p=subprocess.Popen("scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     out, err = p.communicate()
-    return HttpResponse(json.dumps({"response":{"input":original_code,"output":out,"graph":graph,"user_id":user_id},"type":{"code":"200","description":"success"}}),'application/json')
+    if os.path.exists(cwd+"/"+graph+".png"):
+	graph_exists = 1
+    else:
+	graph_exists = 0
+    return HttpResponse(json.dumps({"response":{"input":original_code,"output":out,"graph":graph,"user_id":user_id,"graph_exists":graph_exists},"type":{"code":"200","description":"success"}}),'application/json')
 
 def download(request,graphname):
 	response = HttpResponse(mimetype='application/pdf')
@@ -251,7 +264,7 @@ def get_code(request):
 		rows = cur.fetchall()
 		for row in rows:
 			f=open("/var/www/scilab_in/uploads/"+row[0],'r')
-			
+
 			content+=f.read()+"\n";
 			print query
 			f.close()
@@ -262,10 +275,10 @@ def get_code(request):
 				content += f.read()
 				f.close()
 	response_data={}
-	response_data["input"]=content	
+	response_data["input"]=content
 	return HttpResponse(json.dumps({"response":{"data":content},"type":{"code":"200","description":"success"}}), mimetype="application/json")
 
 	#return HttpResponse(json.dumps(response_data), mimetype="application/json")
-			
 
-		
+
+
