@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="symr" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>symr</refname>
+    
+    <refpurpose>Converts numbers in rational</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>y=symr(x)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>can be of type int, double, complex, string, sym, polynomial</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>y</term>
+	
+	<listitem>
+	  <para>is of type sym</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>The function symr (r as rational) converts a number into a rational. </para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+symr(0.12345)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="symb">symb</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

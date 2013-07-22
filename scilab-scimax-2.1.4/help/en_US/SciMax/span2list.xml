@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="span2list" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>span2list</refname>
+    
+    <refpurpose>Converts span into list</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>L=span2list(S)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>S</term>
+	
+	<listitem>
+	  <para>is a span returned by functions in linearalgebra package</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>L</term>
+	
+	<listitem>
+	  <para>is a sym-list equivalent to the span</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>This function is useful to manipulate vectors.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+a=sym([1 2 3;1 2 5;1 2 7]);
+K=nullspace(a)
+span2list(K)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+</refentry>

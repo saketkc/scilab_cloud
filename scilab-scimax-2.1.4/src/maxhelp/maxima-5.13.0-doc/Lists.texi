@@ -1,0 +1,485 @@
+
+@menu
+* Introduction to Lists::
+* Functions and Variables for Lists::
+@end menu
+
+@node Introduction to Lists, Functions and Variables for Lists, Lists, Lists
+@section Introduction to Lists
+
+Lists are the basic building block for Maxima and Lisp.   All data types
+other than arrays, hash tables, numbers are represented as Lisp lists,
+These Lisp lists have the form
+
+@example
+((MPLUS) $A 2)
+@end example
+
+@noindent
+to indicate an expression @code{a+2}.   At Maxima level one would see
+the infix notation @code{a+2}.   Maxima also has lists which are printed
+as
+
+@example
+[1, 2, 7, x+y]
+@end example
+
+@noindent
+for a list with 4 elements.  Internally this corresponds to a Lisp list
+of the form
+
+@example
+((MLIST) 1  2  7  ((MPLUS)  $X $Y ))
+@end example
+
+@noindent
+The flag which denotes the type field of the Maxima expression is a list
+itself, since after it has been through the simplifier the list would become
+
+@example
+((MLIST SIMP) 1 2 7 ((MPLUS SIMP) $X $Y))
+@end example
+
+@node Functions and Variables for Lists,  , Introduction to Lists, Lists
+@section Functions and Variables for Lists
+
+@c NEED ANOTHER deffn FOR GENERAL EXPRESSIONS ARGUMENTS
+@c NEEDS CLARIFICATION AND EXAMPLES
+@deffn {Function} append (@var{list_1}, ..., @var{list_n})
+Returns a single list of the elements of @var{list_1} followed
+by the elements of @var{list_2}, ...  @code{append} also works on
+general expressions, e.g. @code{append (f(a,b), f(c,d,e));} yields
+@code{f(a,b,c,d,e)}.
+
+Do @code{example(append);} for an example.
+
+@end deffn
+
+@c NEEDS CLARIFICATION AND EXAMPLES
+@deffn {Function} assoc (@var{key}, @var{list}, @var{default})
+@deffnx {Function} assoc (@var{key}, @var{list})
+This function searches for the @var{key} in the left hand side of the input @var{list}
+of the form @code{[x,y,z,...]} where each of the @var{list} elements is an expression of
+a binary operand and 2 elements.  For example @code{x=1}, @code{2^3}, @code{[a,b]} etc.
+The @var{key} is checked againts the first operand.  @code{assoc} returns the second
+operand if the @code{key} is found.  If the @code{key} is not found it
+either returns the @var{default} value.  @var{default} is optional
+and defaults to @code{false}.
+
+@end deffn
+
+@c REPHRASE
+@c SPLIT OFF EXAMPLES INTO EXAMPLE SECTION
+@deffn {Function} atom (@var{expr})
+Returns @code{true} if @var{expr} is atomic (i.e. a number, name or string) else
+@code{false}.  Thus @code{atom(5)} is @code{true} while @code{atom(a[1])} and @code{atom(sin(x))} are
+@code{false} (asuming @code{a[1]} and @code{x} are unbound).
+
+@end deffn
+
+@c NEED ANOTHER deffn FOR GENERAL EXPRESSIONS ARGUMENTS
+@c SPLIT OFF EXAMPLES INTO EXAMPLE SECTION
+@deffn {Function} cons (@var{expr}, @var{list})
+Returns a new list constructed of the element @var{expr} as
+its first element, followed by the elements of @var{list}.  @code{cons} also works
+on other expressions, e.g. @code{cons(x, f(a,b,c));}  ->  @code{f(x,a,b,c)}.
+
+@end deffn
+
+@deffn {Function} copylist (@var{list})
+Returns a copy of the list @var{list}.
+
+@end deffn
+
+@deffn {Function} create_list (@var{form}, @var{x_1}, @var{list_1}, ..., @var{x_n}, @var{list_n})
+
+Create a list by evaluating @var{form} with @var{x_1} bound to
+each element of @var{list_1}, and for each such binding bind @var{x_2}
+to each element of @var{list_2}, ....
+The number of elements in the result will be
+the product of the number of elements in each list.
+Each variable @var{x_i} must actually be a symbol -- it will not be evaluated.
+The list arguments will be evaluated once at the beginning of the
+iteration.
+
+@example
+(%i1) create_list(x^i,i,[1,3,7]);
+                 3   7
+(%o1)       [x, x , x ]
+@end example
+
+@noindent
+With a double iteration:
+
+@example
+(%i1) create_list([i,j],i,[a,b],j,[e,f,h]);
+(%o1) [[a, e], [a, f], [a, h], [b, e], [b, f], [b, h]]
+@end example
+
+Instead of @var{list_i} two args may be supplied each of which should
+evaluate to a number.  These will be the inclusive lower and
+upper bounds for the iteration.
+
+@example
+(%i1) create_list([i,j],i,[1,2,3],j,1,i);
+(%o1) [[1, 1], [2, 1], [2, 2], [3, 1], [3, 2], [3, 3]]
+@end example
+
+Note that the limits or list for the @code{j} variable can
+depend on the current value of @code{i}.
+
+@end deffn
+
+@deffn {Function} delete (@var{expr_1}, @var{expr_2})
+@deffnx {Function} delete (@var{expr_1}, @var{expr_2}, @var{n})
+Removes all occurrences of @var{expr_1} from @var{expr_2}.  @var{expr_1}
+may be a term of @var{expr_2} (if it is a sum) or a factor of @var{expr_2}
+(if it is a product).
+
+@c ===beg===
+@c delete(sin(x), x+sin(x)+y);
+@c ===end===
+@example
+(%i1) delete(sin(x), x+sin(x)+y);
+(%o1)                         y + x
+
+@end example
+
+@code{delete(@var{expr_1}, @var{expr_2}, @var{n})} removes the first @var{n} occurrences of
+@var{expr_1} from @var{expr_2}.  If there are fewer than @var{n}
+occurrences of @var{expr_1} in @var{expr_2} then all occurrences will be deleted.
+
+@c ===beg===
+@c delete(a, f(a,b,c,d,a));
+@c delete(a, f(a,b,a,c,d,a), 2);
+@c ===end===
+@example
+(%i1) delete(a, f(a,b,c,d,a));
+(%o1)                      f(b, c, d)
+(%i2) delete(a, f(a,b,a,c,d,a), 2);
+(%o2)                     f(b, c, d, a)
+
+@end example
+
+@end deffn
+
+@deffn {Function} eighth (@var{expr})
+Returns the 8'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@c NEED ANOTHER deffn FOR GENERAL EXPRESSIONS ARGUMENTS
+@c SPLIT OFF EXAMPLES INTO EXAMPLE SECTION
+@deffn {Function} endcons (@var{expr}, @var{list})
+Returns a new list consisting of the elements of
+@code{list} followed by @var{expr}.  @code{endcons} also works on general expressions, e.g.
+@code{endcons(x, f(a,b,c));}  ->  @code{f(a,b,c,x)}.
+
+@end deffn
+
+@deffn {Function} fifth (@var{expr})
+Returns the 5'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@c NEEDS CLARIFICATION AND EXAMPLES
+@deffn {Function} first (@var{expr})
+Returns the first part of @var{expr} which may result in the first
+element of a list, the first row of a matrix, the first term of a sum,
+etc.  Note that @code{first} and its related functions, @code{rest} and @code{last}, work
+on the form of @var{expr} which is displayed not the form which is typed on
+input.  If the variable @code{inflag} is set to @code{true} however, these
+functions will look at the internal form of @var{expr}.  Note that the
+simplifier re-orders expressions.  Thus @code{first(x+y)} will be @code{x} if @code{inflag}
+is @code{true} and @code{y} if @code{inflag} is @code{false} (@code{first(y+x)} gives the same
+results).  The functions @code{second} .. @code{tenth} yield the second through the
+tenth part of their input argument.
+
+@end deffn
+
+@deffn {Function} fourth (@var{expr})
+Returns the 4'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@deffn {Function} get (@var{a}, @var{i})
+Retrieves the user property indicated by @var{i} associated with
+atom @var{a} or returns @code{false} if a doesn't have property @var{i}.
+
+@code{get} evaluates its arguments.
+
+@c ===beg===
+@c put (%e, 'transcendental, 'type);
+@c put (%pi, 'transcendental, 'type)$
+@c put (%i, 'algebraic, 'type)$
+@c typeof (expr) := block ([q],
+@c         if numberp (expr)
+@c         then return ('algebraic),
+@c         if not atom (expr)
+@c         then return (maplist ('typeof, expr)),
+@c         q: get (expr, 'type),
+@c         if q=false
+@c         then errcatch (error(expr,"is not numeric.")) else q)$
+@c typeof (2*%e + x*%pi);
+@c typeof (2*%e + %pi);
+@c ===end===
+@example
+(%i1) put (%e, 'transcendental, 'type);
+(%o1)                    transcendental
+(%i2) put (%pi, 'transcendental, 'type)$
+(%i3) put (%i, 'algebraic, 'type)$
+(%i4) typeof (expr) := block ([q],
+        if numberp (expr)
+        then return ('algebraic),
+        if not atom (expr)
+        then return (maplist ('typeof, expr)),
+        q: get (expr, 'type),
+        if q=false
+        then errcatch (error(expr,"is not numeric.")) else q)$
+(%i5) typeof (2*%e + x*%pi);
+x is not numeric.
+(%o5)  [[transcendental, []], [algebraic, transcendental]]
+(%i6) typeof (2*%e + %pi);
+(%o6)     [transcendental, [algebraic, transcendental]]
+
+@end example
+
+@end deffn
+
+@deffn {Function} join (@var{l}, @var{m})
+Creates a new list containing the elements of lists @var{l} and @var{m}, interspersed.
+The result has elements @code{[@var{l}[1], @var{m}[1], @var{l}[2], @var{m}[2], ...]}.
+The lists @var{l} and @var{m} may contain any type of elements.
+
+If the lists are different lengths, @code{join} ignores elements of the longer list.
+
+Maxima complains if @var{l} or @var{m} is not a list.
+
+Examples:
+
+@c ===beg===
+@c L1: [a, sin(b), c!, d - 1];
+@c join (L1, [1, 2, 3, 4]);
+@c join (L1, [aa, bb, cc, dd, ee, ff]);
+@c ===end===
+@example
+(%i1) L1: [a, sin(b), c!, d - 1];
+(%o1)                [a, sin(b), c!, d - 1]
+(%i2) join (L1, [1, 2, 3, 4]);
+(%o2)          [a, 1, sin(b), 2, c!, 3, d - 1, 4]
+(%i3) join (L1, [aa, bb, cc, dd, ee, ff]);
+(%o3)        [a, aa, sin(b), bb, c!, cc, d - 1, dd]
+@end example
+
+@end deffn
+
+@c NEEDS EXAMPLES
+@c HOW IS "LAST" PART DETERMINED ??
+@deffn {Function} last (@var{expr})
+Returns the last part (term, row, element, etc.) of the @var{expr}.
+
+@end deffn
+
+@c NEEDS CLARIFICATION AND EXAMPLES
+@deffn {Function} length (@var{expr})
+Returns (by default) the number of parts in the external
+(displayed) form of @var{expr}.  For lists this is the number of elements,
+for matrices it is the number of rows, and for sums it is the number
+of terms (see @code{dispform}).
+
+The @code{length} command is affected by the
+@code{inflag} switch.  So, e.g. @code{length(a/(b*c));} gives 2 if
+@code{inflag} is @code{false} (Assuming @code{exptdispflag} is @code{true}), but 3 if @code{inflag} is
+@code{true} (the internal representation is essentially @code{a*b^-1*c^-1}).
+
+@end deffn
+
+@defvr {Option variable} listarith
+default value: @code{true} - if @code{false} causes any arithmetic operations
+with lists to be suppressed; when @code{true}, list-matrix operations are
+contagious causing lists to be converted to matrices yielding a result
+which is always a matrix.  However, list-list operations should return
+lists.
+
+@end defvr
+
+@deffn {Function} listp (@var{expr})
+Returns @code{true} if @var{expr} is a list else @code{false}.
+
+@end deffn
+
+@deffn {Function} makelist (@var{expr}, @var{i}, @var{i_0}, @var{i_1})
+@deffnx {Function} makelist (@var{expr}, @var{x}, @var{list})
+Constructs and returns a list,
+each element of which is generated from @var{expr}.
+
+@code{makelist (@var{expr}, @var{i}, @var{i_0}, @var{i_1})} returns a list,
+the @code{j}'th element of which is equal to @code{ev (@var{expr}, @var{i}=j)}
+for @code{j} equal to @var{i_0} through @var{i_1}.
+
+@code{makelist (@var{expr}, @var{x}, @var{list})} returns a list,
+the @code{j}'th element of which is equal to @code{ev (@var{expr}, @var{x}=@var{list}[j])}
+for @code{j} equal to 1 through @code{length (@var{list})}.
+
+Examples:
+
+@c ===beg===
+@c makelist(concat(x,i),i,1,6);
+@c makelist(x=y,y,[a,b,c]);
+@c ===end===
+@example
+(%i1) makelist(concat(x,i),i,1,6);
+(%o1)               [x1, x2, x3, x4, x5, x6]
+(%i2) makelist(x=y,y,[a,b,c]);
+(%o2)                 [x = a, x = b, x = c]
+
+@end example
+
+@end deffn
+
+@deffn {Function} member (@var{expr_1}, @var{expr_2})
+
+Returns @code{true} if @code{is(@var{expr_1} = @var{a})}
+for some element @var{a} in @code{args(@var{expr_2})},
+otherwise returns @code{false}.
+
+@code{expr_2} is typically a list,
+in which case @code{args(@var{expr_2}) = @var{expr_2}}
+and @code{is(@var{expr_1} = @var{a})} for some element @var{a} in @code{expr_2} is the test.
+
+@code{member} does not inspect parts of the arguments of @code{expr_2},
+so it may return @code{false} even if @code{expr_1} is a part of some argument of @code{expr_2}.
+
+See also @code{elementp}.
+
+Examples:
+
+@c ===beg===
+@c member (8, [8, 8.0, 8b0]);
+@c member (8, [8.0, 8b0]);
+@c member (b, [a, b, c]);
+@c member (b, [[a, b], [b, c]]);
+@c member ([b, c], [[a, b], [b, c]]);
+@c F (1, 1/2, 1/4, 1/8);
+@c member (1/8, %);
+@c member ("ab", ["aa", "ab", sin(1), a + b]);
+@c ===end===
+@example
+(%i1) member (8, [8, 8.0, 8b0]);
+(%o1)                         true
+(%i2) member (8, [8.0, 8b0]);
+(%o2)                         false
+(%i3) member (b, [a, b, c]);
+(%o3)                         true
+(%i4) member (b, [[a, b], [b, c]]);
+(%o4)                         false
+(%i5) member ([b, c], [[a, b], [b, c]]);
+(%o5)                         true
+(%i6) F (1, 1/2, 1/4, 1/8);
+                               1  1  1
+(%o6)                     F(1, -, -, -)
+                               2  4  8
+(%i7) member (1/8, %);
+(%o7)                         true
+(%i8) member ("ab", ["aa", "ab", sin(1), a + b]);
+(%o8)                         true
+@end example
+
+@end deffn
+
+@deffn {Function} ninth (@var{expr})
+Returns the 9'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@c NEEDS EXAMPLES
+@deffn {Function} rest (@var{expr}, @var{n})
+@deffnx {Function} rest (@var{expr})
+Returns @var{expr} with its first @var{n} elements removed if @var{n} is
+positive and its last @code{- @var{n}} elements removed if @var{n} is negative.  If @var{n} is 1
+it may be omitted.  @var{expr} may be a list, matrix, or other expression.
+
+@end deffn
+
+@c NEED ANOTHER deffn FOR GENERAL EXPRESSIONS ARGUMENTS
+@c SPLIT OFF EXAMPLES INTO EXAMPLE SECTION
+@deffn {Function} reverse (@var{list})
+Reverses the order of the members of the @var{list} (not
+the members themselves).  @code{reverse} also works on general expressions,
+e.g.  @code{reverse(a=b);} gives @code{b=a}.
+
+@end deffn
+
+@deffn {Function} second (@var{expr})
+Returns the 2'nd item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@deffn {Function} seventh (@var{expr})
+Returns the 7'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@deffn {Function} sixth (@var{expr})
+Returns the 6'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@deffn {Function} sublist_indices (@var{L}, @var{P})
+
+Returns the indices of the elements @code{x} of the list @var{L} for which
+the predicate @code{maybe(@var{P}(x))} returns @code{true};
+this excludes @code{unknown} as well as @code{false}.
+@var{P} may be the name of a function or a lambda expression.
+@var{L} must be a literal list.
+
+Examples:
+@c ===beg===
+@c sublist_indices ('[a, b, b, c, 1, 2, b, 3, b], 
+@c                        lambda ([x], x='b));
+@c sublist_indices ('[a, b, b, c, 1, 2, b, 3, b], symbolp);
+@c sublist_indices ([1 > 0, 1 < 0, 2 < 1, 2 > 1, 2 > 0], 
+@c                        identity);
+@c assume (x < -1);
+@c map (maybe, [x > 0, x < 0, x < -2]);
+@c sublist_indices ([x > 0, x < 0, x < -2], identity);
+@c ===end===
+
+@example
+(%i1) sublist_indices ('[a, b, b, c, 1, 2, b, 3, b],
+                       lambda ([x], x='b));
+(%o1)                     [2, 3, 7, 9]
+(%i2) sublist_indices ('[a, b, b, c, 1, 2, b, 3, b], symbolp);
+(%o2)                  [1, 2, 3, 4, 7, 9]
+(%i3) sublist_indices ([1 > 0, 1 < 0, 2 < 1, 2 > 1, 2 > 0],
+                       identity);
+(%o3)                       [1, 4, 5]
+(%i4) assume (x < -1);
+(%o4)                       [x < - 1]
+(%i5) map (maybe, [x > 0, x < 0, x < -2]);
+(%o5)                [false, true, unknown]
+(%i6) sublist_indices ([x > 0, x < 0, x < -2], identity);
+(%o6)                          [2]
+@end example
+
+@end deffn
+
+@deffn {Function} tenth (@var{expr})
+Returns the 10'th item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+
+@deffn {Function} third (@var{expr})
+Returns the 3'rd item of expression or list @var{expr}.
+See @code{first} for more details.
+
+@end deffn
+

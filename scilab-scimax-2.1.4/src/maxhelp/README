@@ -1,0 +1,7 @@
+This directory contains files used to generate Scilab's documentation of the Maxima's functions.
+
+The command texi2scidoc takes texi files and generates xml files. I found the texi files in the source-package of Maxima (doc/info/) and the directory doc/info/figures is necessary to put pictures in documentation. I put a copy of all this files in the directory maxima-5.13.0.
+
+The command genMaxDoc.sh shows how to use texi2scidoc to generate Scilab's doc and listmaxfun.sce (which contains all available commands in Maxima). Look at the source of genMaxDoc.sh.
+
+I generated Maxima's documentation (for languages fr_FR and en_US so you don't need to do it), this is a long process so you should re-generate the doc only if you use another version of Maxima.

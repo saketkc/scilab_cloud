@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="span2list" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>span2list</refname>
+    
+    <refpurpose>Convertit un span en une liste</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>L=span2list(S)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>S</term>
+	
+	<listitem>
+	  <para>est un span (espace vectoriel engendré) par certaines fonctions dans le package linearalgebra</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>L</term>
+	
+	<listitem>
+	  <para>est une sym-liste équivalente au span</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>Cette fonction est utile pour manipuler les vecteurs de base d'un sous-espace vectoriel.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+a=sym([1 2 3;1 2 5;1 2 7]);
+K=nullspace(a)
+span2list(K)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+</refentry>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="symb" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>symb</refname>
+    
+    <refpurpose>Convertit un nombre en bigfloat</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>y=symb(x,prec)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>peut être du type entier, double, complexe, chaîne, sym, polynôme</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>prec</term>
+	
+	<listitem>
+	  <para>est la précision requise</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>y</term>
+	
+	<listitem>
+	  <para>est du type sym</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>La fonction symb (b comme bigfloat) convertit avec une précision arbitraire un nombre en bigfloat.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+symb('%pi',314)
+F=sym(5);symb((1+sqrt(F))/2,100)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="symr">symr</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

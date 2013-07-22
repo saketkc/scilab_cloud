@@ -1,0 +1,22 @@
+SciMax is a toolbox for Scilab to connect it with Maxima
+
+To install it :
+	
+	- check the path of the Overload Toolbox
+	- start Scilab and type "%otb_path='path of ov_toolbox';" and "exec builer.sce;"
+	- you need to have Maxima compiled with GCL or CLisp;
+
+For the moment expressions, matrices, sets and lists are managed. Next version should manage other types (graph for example)
+
+Note:
+
+I wrote this toolbox under Debian Lenny with kernel 2.6.26, Scilab 5.1.1, gcc 4.3.2, clisp 2.44.1 and gcl 2.6.7. 
+I tested the versions 5.13.0, 5.17.0, 5.17.1, 5.18.1 compiled with GCL and CLisp
+ and all is good.
+
+The main difference between SciMax 2.x and 1.x is that the binary datas are not transmitted via binary pipe. I met several difficulties under Ubuntu and Fedora to compile correctly the C files used by Maxima (bugs in GCL, difficulties to recompile GCL, Clisp not compiled with --with-dynamic-modules under Fedora, ...). So I decided to convert numerical data in Scilab into strings and to pass them in the command-line (which is less efficient, but everybody have not a Debian system ... :o( )
+
+If you have remarks, suggestions or bugs, you can write me at :
+	
+			calixte.denizet@ac-rennes.fr
+

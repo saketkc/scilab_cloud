@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="poly2coef" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>poly2coef</refname>
+    
+    <refpurpose>Donne une liste des coefficients</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>L=poly2coef(P,x)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>P</term>
+	
+	<listitem>
+	  <para>est un sym ou un polynôme</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>est une chaîne représentant la principale variable de P</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>S</term>
+	
+	<listitem>
+	  <para>est une sym-liste représentant les coefficients en x de P</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>Le polynôme peut avoir plusieurs variables.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+Syms(['x' 'y'])
+P=x^4*y^3-2*x^3*y^2+3*x^2-y+1
+poly2coef(P,x),poly2coef(P,y)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="sym2poly">sym2poly</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

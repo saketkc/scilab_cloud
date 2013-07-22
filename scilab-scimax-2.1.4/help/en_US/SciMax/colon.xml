@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="colon" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>colon (:)</refname>
+    
+    <refpurpose>Affects a variable in Maxima</refpurpose>
+  </refnamediv>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>The Scilab operator colon (:) is overloaded for sym variables at the left side to affect a Maxima variable in Maxima environment.</para>
+      
+  </refsection>
+
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+x=sym('x'),y=x*x
+x:3,y
+
+//You can kill a variable
+kill(x),y 
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+</refentry>

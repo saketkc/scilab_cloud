@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="answer" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>answer</refname>
+    
+    <refpurpose>Répond à une question posée par Maxima</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>s=answer(answ)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>answ</term>
+	
+	<listitem>
+	  <para>est la réponse à la question (une chaîne)</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>s</term>
+	
+	<listitem>
+	  <para>est du type sym</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>Parfois Maxima a besoin d'informations pour effectuer un calcul, il a donc besoin de les récupérer. Si vous ne voulez pas donner de réponse, utilisez la fonction <literal>noanswer</literal>.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+Syms(['a' 'x'])
+assume(a>1)
+integrate(x^a/(x+1)^'5/2',x,0,%inf)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="noanswer">noanswer</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

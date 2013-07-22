@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="percent_diff" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>%diff</refname>
+    
+    <refpurpose>Forme non-évaluée de diff</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>y=%diff(expr1 [,expr2 [,...]])</synopsis>
+  </refsynopsisdiv>
+  
+  <refsection>
+    <title>Description</title>
+    
+    <para>Cette fonction est utile pour écrire des équations différentielles.</para>
+      
+  </refsection>
+
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+Syms('x')
+%diff(sin(x),x)
+eq=%diff('f(x)',x)=='f(x)'
+atvalue('f(x)',x==0,1)
+desolve(eq,'f(x)')
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+</refentry>

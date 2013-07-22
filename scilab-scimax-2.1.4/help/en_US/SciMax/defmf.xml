@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="defmf" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>defmf</refname>
+    
+    <refpurpose>Defines a Maxima function in the Scilab environment</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>defmf(scinam,maxnam,code)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>scinam</term>
+	
+	<listitem>
+	  <para>is the name of the function in Scilab environment</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>maxnam</term>
+	
+	<listitem>
+	  <para>is the function definition in Maxima (see Examples)</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>code</term>
+	
+	<listitem>
+	  <para>is the Maxima code of the function</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>The Maxima function can have several or an undefined number of arguments.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+defmf('scifun','maxfun(x)','x^2+x+1')
+Syms('x'),diff(scifun(x),x)
+defmf('mean3','mean3(x,y,z)','(x+y+z)/3'),mean3(1,2,3)
+defmf('Mean','Mean([L])','block(s:0,for i in L do s:s+i,s/length(L))')
+Mean(1,2,3,4,5,6),Mean(3,2,6,8,9,2,11,32)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="maxevalf">maxevalf</link></member>
+      <member><link linkend="maxevalfl">maxevalfl</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

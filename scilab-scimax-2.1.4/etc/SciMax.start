@@ -1,0 +1,104 @@
+//    <SciMax, a Scilab toolbox to connect Maxima.>
+//    Copyright (C) <2009>  <Calixte DENIZET>
+
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+//   Contact : Calixte DENIZET <calixte.denizet@ac-rennes.fr>
+
+mode(-1);
+lines(0);
+here=get_absolute_file_path('SciMax.start');
+mpath=here+'/../'
+
+setenv('SCIMAX_TOOLBOX_PATH',mpath)
+
+exec(here+'Overload_TB_path.sce',-1)
+if fileinfo(Overload_TB_path)==[] then
+  printf('You need to install the Overload Toolbox or give the correct path in file ./etc/Overload_TB_path.sce\n')
+  clear mpath Overload_TB_path
+  abort
+else
+  exec(Overload_TB_path,-1)
+end
+
+printf('\nLoading Maxima library : ')
+
+functions=['maxinit';'maxkill';'maxevalf';'maxevalfl';'%sym_p';'sym';'Matrix';'symnp';'defmf';'Syms';'latex';'mathml';'answer';'noanswer';'maxadd';'maxpow';'maxmul';'maxdiv';'maxsub';'maxbs';'maxpmul';'maxpdiv';'maxpbs';'maxppow';'maxfb';'maxkp';'maxlow';'maxleq';'maxgreat';'maxgeq';'maxneq';'maxeq';'maxaff']
+
+if or(link()=='libmaxima') then
+  printf('The file libmaxima is already loaded. Try to unload it with ulink.\n');
+  abort
+end
+
+addinter(mpath+'src/c/libmaxima.so','libmaxima',functions)
+
+//La ligne suivante permet que le passage des parametres se fasse par reference
+//plutot que par valeur
+if funptr('sin') < 1000 then
+  intppty(floor(funptr('maxinit')/100));
+else
+  intppty(floor(funptr('maxinit')/1000));
+end
+
+//Les types suivants sont geres en interne
+types_geres=['c','i','p','s','sym']
+
+//On construit les fonctions de surcharge des operateurs
+//Par exemple, %sym_a_s est une copie du pointeur vers maxadd, ce mecanisme
+//est preferable a la creation d'une macro car le passage des param se fera
+//par reference ce qui evite une copie locale des param.
+op_maxfun=[['a' 'maxadd'];['p' 'maxpow'];['m' 'maxmul'];['r' 'maxdiv'];['s' 'maxsub'];['l' 'maxbs'];['x' 'maxpmul'];['d' 'maxpdiv'];['q' 'maxpbs'];['j' 'maxppow'];['v' 'maxfb'];['k' 'maxkp'];['1' 'maxlow'];['3' 'maxleq'];['2' 'maxgreat'];['4' 'maxgeq'];['o' 'maxeq'];['n' 'maxneq'];['b' 'maxaff']]
+
+[m,n]=size(op_maxfun)
+
+for i=types_geres,
+  for j=1:m,
+    newfun('%sym_'+op_maxfun(j,1)+'_'+i,funptr(op_maxfun(j,2)))
+    if ((i ~= 'sym')&(op_maxfun(j,2) ~= 'maxaff')),
+      newfun('%'+i+'_'+op_maxfun(j,1)+'_sym',funptr(op_maxfun(j,2)))
+    end
+  end
+end;
+
+SciMax_maxfunlib=lib(mpath+'macros/maxfun/genmaxfun/')
+SciMax_percentlib=lib(mpath+'macros/percent/')
+SciMaxlib=lib(mpath+'macros/')
+
+if fileinfo(mpath+'macros/maxfun/personnalizedOverload.sce')==[] then
+  exec(mpath+'macros/maxfun/genmaxfun/overload.sce',-1)
+else
+  exec(mpath+'macros/maxfun/personnalizedOverload.sce',-1)
+end
+
+
+//add help chapter
+printf('Load help : ');
+path_addchapter = mpath + "jar/";
+if ( fileinfo(path_addchapter) <> [] ) then
+    add_help_chapter('SciMax Toolbox', path_addchapter, %F);
+    clear add_help_chapter;
+end
+
+printf('help loaded\n');
+
+add_demo('SciMax demo',mpath+'demos/SciMax.dem');
+printf('You can see a demo with exec ""'+mpath+'demos/SciMax.dem""\n');
+
+//La variable xml_en_tete sert a ajouter l'en-tete necessaire pour les fichiers contenant du mathml 
+xml_en_tete=['<?xml version=""1.0"" encoding=""UTF-8""?>';'<!DOCTYPE math PUBLIC ""-//W3C//DTD MathML 2.0//EN"" ""http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"">'];
+
+printf('\n** Use maxinit to start Maxima  **\n')
+
+clear mpath Overload_TB_path functions types_geres op_maxfun m n f err

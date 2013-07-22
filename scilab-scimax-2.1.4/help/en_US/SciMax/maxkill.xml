@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="maxkill" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>maxkill</refname>
+    
+    <refpurpose>Kills Maxima</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>maxkill</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>This function kills Maxima process in using SIGKILL signal.</para>
+    <para>If a serious error is encountered by Maxima (forcing it to enter in debugmode) maxkill is used automatically.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="maxinit">maxinit</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

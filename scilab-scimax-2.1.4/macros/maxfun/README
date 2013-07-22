@@ -1,0 +1,9 @@
+In this directory you'll find three important files :
+	
+	- personnalizedMaxfun.sce;
+	- personnalizedOverload.sce;
+	- personnalizedNames.sce.
+
+Open them and see the commentaries at the beginning.
+
+The file listmaxfun.sce has been generated in parsing the Maxima documentation so don't modify it.

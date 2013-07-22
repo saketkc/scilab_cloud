@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="scimax_equal" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>equal (==)</refname>
+    
+    <refpurpose>Symbolise l'égalité dans des equations contenant des syms</refpurpose>
+  </refnamediv>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>L'opérateur Scilab (==) est surchargé pour créer des équations contenant des symboles.</para>
+      
+  </refsection>
+
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+Syms('x');
+eq=x^2+x-1;
+sol=solve(eq==0,x)
+sol=maplist('rhs',sol)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+</refentry>

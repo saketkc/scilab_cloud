@@ -1,0 +1,13 @@
+The toolbox can be used with Maxima compiled with GCL or CLISP.
+
+You can test the files in Maxima in setting the environment variable SCIMAX_TOOLBOX_PATH and in launching Maxima with :
+    maxima -p loader.lisp
+
+and build them with :
+    maxima -p make.lisp
+
+If in Scilab you got the error message "Maxima started but it could not load scimax or scimath...", type in a shell :
+   maxima -p scimax
+
+and send the output to :
+    	    	       calixte.denizet@ac-rennes.fr 

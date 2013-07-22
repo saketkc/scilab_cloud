@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="symbols" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>Symboles</refname>
+    
+    <refpurpose>Opérateurs surchargés pour SciMax toolbox</refpurpose>
+  </refnamediv>
+  
+  <refsection>
+    <title>Description</title>
+    
+    <para>Les différents opérateurs Scilab sont surchargés pour gérer le type sym et ils ont la même signification excepté pour tilda (~), colon (:) et equal (==).</para>
+      
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="tilda">tilda</link></member>
+      <member><link linkend="equal">equal</link></member>
+      <member><link linkend="colon">colon</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

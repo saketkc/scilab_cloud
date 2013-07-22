@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="tilda" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>tilda (~)</refname>
+    
+    <refpurpose>(~) Convertit un sym en chaîne</refpurpose>
+  </refnamediv>
+    
+  <refsection>
+    <title>Description</title>
+    
+    <para>L'opérateur Scilab tilda (~) est surchargé pour gérer les variables de type sym afin de donner la representation du symbole.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+s=sym('x^2+3')
+deff('y=f(x)','y='+~s)
+f(5)
+H=hilbert_matrix(5)
+eval(~H)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+</refentry>

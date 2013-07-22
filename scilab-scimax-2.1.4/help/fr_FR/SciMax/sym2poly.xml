@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="sym2poly" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>sym2poly</refname>
+    
+    <refpurpose>Convertit un sym-polynôme en un polynôme Scilab</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>S=symb(P,x)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>P</term>
+	
+	<listitem>
+	  <para>est un sym-polynôme</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>est une chaîne représentant la principal variable de P</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>S</term>
+	
+	<listitem>
+	  <para>est le polynôme Scilab résultant</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>Le polynôme doit avoir des coefficients réels ou complexes.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+Syms('x')
+P=x^4-2*x^3+3*x^2-x+1
+sym2poly(P,'x')
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="poly2coef">poly2coef</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

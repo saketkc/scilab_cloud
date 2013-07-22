@@ -1,0 +1,527 @@
+
+@menu
+* Introduction to Trigonometric::  
+* Functions and Variables for Trigonometric::  
+@end menu
+
+@node Introduction to Trigonometric, Functions and Variables for Trigonometric, Trigonometric, Trigonometric
+@section Introduction to Trigonometric
+
+Maxima has many trigonometric functions defined.  Not all trigonometric
+identities are programmed, but it is possible for the user to add many
+of them using the pattern matching capabilities of the system.  The
+trigonometric functions defined in Maxima are: @code{acos},
+@code{acosh}, @code{acot}, @code{acoth}, @code{acsc},
+@code{acsch}, @code{asec}, @code{asech}, @code{asin}, 
+@code{asinh}, @code{atan}, @code{atanh}, @code{cos}, 
+@code{cosh}, @code{cot}, @code{coth}, @code{csc}, @code{csch}, 
+@code{sec}, @code{sech}, @code{sin}, @code{sinh}, @code{tan}, 
+and @code{tanh}.  There are a number of commands especially for 
+handling trigonometric functions, see @code{trigexpand},
+@code{trigreduce}, and the switch @code{trigsign}.  Two share 
+packages extend the simplification rules built into Maxima, 
+@code{ntrig} and @code{atrig1}.  Do @code{describe(@var{command})}
+for details.
+
+@node Functions and Variables for Trigonometric,  , Introduction to Trigonometric, Trigonometric
+@section Functions and Variables for Trigonometric
+
+@defvr {Option variable} %piargs
+Default value: @code{true}
+
+When @code{%piargs} is @code{true},
+trigonometric functions are simplified to algebraic constants
+when the argument is an integer multiple of
+@math{%pi}, @math{%pi/2}, @math{%pi/3}, @math{%pi/4}, or @math{%pi/6}
+
+Maxima knows some identities which can be applied when @math{%pi}, etc.,
+are multiplied by an integer variable (that is, a symbol declared to be integer).
+
+Examples:
+
+@c ===beg===
+@c %piargs : false;
+@c [sin (%pi), sin (%pi/2), sin (%pi/3)];
+@c [sin (%pi/4), sin (%pi/5), sin (%pi/6)];
+@c %piargs : true;
+@c [sin (%pi), sin (%pi/2), sin (%pi/3)];
+@c [sin (%pi/4), sin (%pi/5), sin (%pi/6)];
+@c [cos (%pi/3), cos (10*%pi/3), tan (10*%pi/3), cos (sqrt(2)*%pi/3)];
+@c ===end===
+@example
+(%i1) %piargs : false;
+(%o1)                         false
+(%i2) [sin (%pi), sin (%pi/2), sin (%pi/3)];
+                                %pi       %pi
+(%o2)            [sin(%pi), sin(---), sin(---)]
+                                 2         3
+(%i3) [sin (%pi/4), sin (%pi/5), sin (%pi/6)];
+                      %pi       %pi       %pi
+(%o3)            [sin(---), sin(---), sin(---)]
+                       4         5         6
+(%i4) %piargs : true;
+(%o4)                         true
+(%i5) [sin (%pi), sin (%pi/2), sin (%pi/3)];
+                                sqrt(3)
+(%o5)                    [0, 1, -------]
+                                   2
+(%i6) [sin (%pi/4), sin (%pi/5), sin (%pi/6)];
+                         1         %pi   1
+(%o6)                [-------, sin(---), -]
+                      sqrt(2)       5    2
+(%i7) [cos (%pi/3), cos (10*%pi/3), tan (10*%pi/3), cos (sqrt(2)*%pi/3)];
+                1    1               sqrt(2) %pi
+(%o7)          [-, - -, sqrt(3), cos(-----------)]
+                2    2                    3
+@end example
+
+Some identities are applied when @math{%pi} and @math{%pi/2} are multiplied by an integer variable.
+
+@c ===beg===
+@c declare (n, integer, m, even);
+@c [sin (%pi * n), cos (%pi * m), sin (%pi/2 * m), cos (%pi/2 * m)];
+@c ===end===
+@example
+(%i1) declare (n, integer, m, even);
+(%o1)                         done
+(%i2) [sin (%pi * n), cos (%pi * m), sin (%pi/2 * m), cos (%pi/2 * m)];
+                                      m/2
+(%o2)                  [0, 1, 0, (- 1)   ]
+@end example
+
+@end defvr
+
+@defvr {Option variable} %iargs
+Default value: @code{true}
+
+When @code{%iargs} is @code{true},
+trigonometric functions are simplified to hyperbolic functions
+when the argument is apparently a multiple of the imaginary unit @math{%i}.
+
+Even when the argument is demonstrably real, the simplification is applied;
+Maxima considers only whether the argument is a literal multiple of @math{%i}.
+
+Examples:
+
+@c ===beg===
+@c %iargs : false;
+@c [sin (%i * x), cos (%i * x), tan (%i * x)];
+@c %iargs : true;
+@c [sin (%i * x), cos (%i * x), tan (%i * x)];
+@c ===end===
+@example
+(%i1) %iargs : false;
+(%o1)                         false
+(%i2) [sin (%i * x), cos (%i * x), tan (%i * x)];
+(%o2)           [sin(%i x), cos(%i x), tan(%i x)]
+(%i3) %iargs : true;
+(%o3)                         true
+(%i4) [sin (%i * x), cos (%i * x), tan (%i * x)];
+(%o4)           [%i sinh(x), cosh(x), %i tanh(x)]
+@end example
+
+Even when the argument is demonstrably real, the simplification is applied.
+
+@c ===beg===
+@c declare (x, imaginary);
+@c [featurep (x, imaginary), featurep (x, real)];
+@c sin (%i * x);
+@c ===end===
+@example
+(%i1) declare (x, imaginary);
+(%o1)                         done
+(%i2) [featurep (x, imaginary), featurep (x, real)];
+(%o2)                     [true, false]
+(%i3) sin (%i * x);
+(%o3)                      %i sinh(x)
+@end example
+
+@end defvr
+
+@deffn {Function} acos (@var{x})
+ - Arc Cosine.
+
+@end deffn
+
+@deffn {Function} acosh (@var{x})
+ - Hyperbolic Arc Cosine.
+
+@end deffn
+
+@deffn {Function} acot (@var{x})
+ - Arc Cotangent.
+
+@end deffn
+
+@deffn {Function} acoth (@var{x})
+ - Hyperbolic Arc Cotangent.
+
+@end deffn
+
+@deffn {Function} acsc (@var{x})
+ - Arc Cosecant.
+
+@end deffn
+
+@deffn {Function} acsch (@var{x})
+ - Hyperbolic Arc Cosecant.
+
+@end deffn
+
+@deffn {Function} asec (@var{x})
+ - Arc Secant.
+
+@end deffn
+
+@deffn {Function} asech (@var{x})
+ - Hyperbolic Arc Secant.
+
+@end deffn
+
+@deffn {Function} asin (@var{x})
+ - Arc Sine.
+
+@end deffn
+
+@deffn {Function} asinh (@var{x})
+ - Hyperbolic Arc Sine.
+
+@end deffn
+
+@deffn {Function} atan (@var{x})
+ - Arc Tangent.
+
+@end deffn
+
+@deffn {Function} atan2 (@var{y}, @var{x})
+- yields the value of @code{atan(@var{y}/@var{x})} in the interval @code{-%pi} to
+@code{%pi}.
+
+@end deffn
+
+@deffn {Function} atanh (@var{x})
+ - Hyperbolic Arc Tangent.
+
+@end deffn
+
+@c IS THIS DESCRIPTION ACCURATE ??
+@c LET'S BE EXPLICIT ABOUT EXACTLY WHAT ARE THE RULES IMPLEMENTED BY THIS PACKAGE
+@defvr {Package} atrig1
+The @code{atrig1} package contains several additional simplification rules 
+for inverse trigonometric functions.  Together with rules
+already known to Maxima, the following angles are fully implemented:
+@code{0}, @code{%pi/6}, @code{%pi/4}, @code{%pi/3}, and @code{%pi/2}.  
+Corresponding angles in the other three quadrants are also available.  
+Do @code{load(atrig1);} to use them.
+
+@end defvr
+
+@deffn {Function} cos (@var{x})
+ - Cosine.
+
+@end deffn
+
+@deffn {Function} cosh (@var{x})
+ - Hyperbolic Cosine.
+
+@end deffn
+
+@deffn {Function} cot (@var{x})
+ - Cotangent.
+
+@end deffn
+
+@deffn {Function} coth (@var{x})
+ - Hyperbolic Cotangent.
+
+@end deffn
+
+@deffn {Function} csc (@var{x})
+ - Cosecant.
+
+@end deffn
+
+@deffn {Function} csch (@var{x})
+ - Hyperbolic Cosecant.
+
+@end deffn
+
+@defvr {Option variable} halfangles
+Default value: @code{false}
+
+When @code{halfangles} is @code{true},
+half-angles are simplified away.
+@c WHAT DOES THIS STATEMENT MEAN EXACTLY ??
+@c NEEDS EXAMPLES
+
+@end defvr
+
+@c IS THIS DESCRIPTION ACCURATE ??
+@c LET'S BE EXPLICIT ABOUT EXACTLY WHAT ARE THE RULES IMPLEMENTED BY THIS PACKAGE
+@defvr {Package} ntrig
+The @code{ntrig} package contains a set of simplification rules that are
+used to simplify trigonometric function whose arguments are of the form
+@code{@var{f}(@var{n} %pi/10)} where @var{f} is any of the functions 
+@code{sin}, @code{cos}, @code{tan}, @code{csc}, @code{sec} and @code{cot}.
+@c NEED TO LOAD THIS PACKAGE ??
+
+@end defvr
+
+@deffn {Function} sec (@var{x})
+ - Secant.
+
+@end deffn
+
+@deffn {Function} sech (@var{x})
+ - Hyperbolic Secant.
+
+@end deffn
+
+@deffn {Function} sin (@var{x})
+ - Sine.
+
+@end deffn
+
+@deffn {Function} sinh (@var{x})
+ - Hyperbolic Sine.
+
+@end deffn
+
+@deffn {Function} tan (@var{x})
+ - Tangent.
+
+@end deffn
+
+@deffn {Function} tanh (@var{x})
+ - Hyperbolic Tangent.
+
+@end deffn
+
+@c NEEDS CLARIFICATION AND EXAMPLES
+@deffn {Function} trigexpand (@var{expr})
+Expands trigonometric and hyperbolic functions of
+sums of angles and of multiple angles occurring in @var{expr}.  For best
+results, @var{expr} should be expanded.  To enhance user control of
+simplification, this function expands only one level at a time,
+expanding sums of angles or multiple angles.  To obtain full expansion
+into sines and cosines immediately, set the switch @code{trigexpand: true}.
+
+@code{trigexpand} is governed by the following global flags:
+
+@table @code
+@item trigexpand
+If @code{true} causes expansion of all
+expressions containing sin's and cos's occurring subsequently.
+@item halfangles
+If @code{true} causes half-angles to be simplified
+away.
+@item trigexpandplus
+Controls the "sum" rule for @code{trigexpand},
+expansion of sums (e.g. @code{sin(x + y)}) will take place only if
+@code{trigexpandplus} is @code{true}.
+@item trigexpandtimes
+Controls the "product" rule for @code{trigexpand},
+expansion of products (e.g. @code{sin(2 x)}) will take place only if
+@code{trigexpandtimes} is @code{true}.
+@end table
+
+Examples:
+
+@c ===beg===
+@c x+sin(3*x)/sin(x),trigexpand=true,expand;
+@c trigexpand(sin(10*x+y));
+@c ===end===
+@example
+(%i1) x+sin(3*x)/sin(x),trigexpand=true,expand;
+                         2           2
+(%o1)               - sin (x) + 3 cos (x) + x
+(%i2) trigexpand(sin(10*x+y));
+(%o2)          cos(10 x) sin(y) + sin(10 x) cos(y)
+
+@end example
+
+@end deffn
+
+@defvr {Option variable} trigexpandplus
+Default value: @code{true}
+
+@code{trigexpandplus} controls the "sum" rule for
+@code{trigexpand}.  Thus, when the @code{trigexpand} command is used or the
+@code{trigexpand} switch set to @code{true}, expansion of sums 
+(e.g. @code{sin(x+y))} will take place only if @code{trigexpandplus} is 
+@code{true}.
+
+@end defvr
+
+@defvr {Option variable} trigexpandtimes
+Default value: @code{true}
+
+@code{trigexpandtimes} controls the "product" rule for
+@code{trigexpand}.  Thus, when the @code{trigexpand} command is used or the
+@code{trigexpand} switch set to @code{true}, expansion of products (e.g. @code{sin(2*x)})
+will take place only if @code{trigexpandtimes} is @code{true}.
+
+@end defvr
+
+@defvr {Option variable} triginverses
+Default value: @code{all}
+
+@code{triginverses} controls the simplification of the
+composition of trigonometric and hyperbolic functions with their inverse
+functions.
+
+If @code{all}, both e.g. @code{atan(tan(@var{x}))} 
+and @code{tan(atan(@var{x}))} simplify to @var{x}.  
+
+If @code{true}, the @code{@var{arcfun}(@var{fun}(@var{x}))} 
+simplification is turned off.
+
+If @code{false}, both the 
+@code{@var{arcfun}(@var{fun}(@var{x}))} and 
+@code{@var{fun}(@var{arcfun}(@var{x}))}
+simplifications are turned off.
+
+@end defvr
+
+@deffn {Function} trigreduce (@var{expr}, @var{x})
+@deffnx {Function} trigreduce (@var{expr})
+Combines products and powers of trigonometric
+and hyperbolic sin's and cos's of @var{x} into those of multiples of @var{x}.
+It also tries to eliminate these functions when they occur in
+denominators.  If @var{x} is omitted then all variables in @var{expr} are used.
+
+See also @code{poissimp}.
+
+@c ===beg===
+@c trigreduce(-sin(x)^2+3*cos(x)^2+x);
+@c ===end===
+@example
+(%i1) trigreduce(-sin(x)^2+3*cos(x)^2+x);
+               cos(2 x)      cos(2 x)   1        1
+(%o1)          -------- + 3 (-------- + -) + x - -
+                  2             2       2        2
+
+@end example
+
+The trigonometric simplification routines will use declared
+information in some simple cases.  Declarations about variables are
+used as follows, e.g.
+
+@c ===beg===
+@c declare(j, integer, e, even, o, odd)$
+@c sin(x + (e + 1/2)*%pi);
+@c sin(x + (o + 1/2)*%pi);
+@c ===end===
+@example
+(%i1) declare(j, integer, e, even, o, odd)$
+(%i2) sin(x + (e + 1/2)*%pi);
+(%o2)                        cos(x)
+(%i3) sin(x + (o + 1/2)*%pi);
+(%o3)                       - cos(x)
+
+@end example
+
+@end deffn
+
+@defvr {Option variable} trigsign
+Default value: @code{true}
+
+When @code{trigsign} is @code{true}, it permits simplification of negative
+arguments to trigonometric functions. E.g., @code{sin(-x)} will become
+@code{-sin(x)} only if @code{trigsign} is @code{true}.
+
+@end defvr
+
+@deffn {Function} trigsimp (@var{expr})
+Employs the identities @math{sin(x)^2 + cos(x)^2 = 1} and
+@math{cosh(x)^2 - sinh(x)^2 = 1} to simplify expressions containing @code{tan}, @code{sec},
+etc., to @code{sin}, @code{cos}, @code{sinh}, @code{cosh}.
+
+@code{trigreduce}, @code{ratsimp}, and @code{radcan} may be
+able to further simplify the result.
+
+@code{demo ("trgsmp.dem")} displays some examples of @code{trigsimp}.
+@c MERGE EXAMPLES INTO THIS ITEM
+
+@end deffn
+
+@c NEEDS CLARIFICATION
+@deffn {Function} trigrat (@var{expr})
+Gives a canonical simplifyed quasilinear form of a
+trigonometrical expression; @var{expr} is a rational fraction of several @code{sin},
+@code{cos} or @code{tan}, the arguments of them are linear forms in some variables (or
+kernels) and @code{%pi/@var{n}} (@var{n} integer) with integer coefficients. The result is a
+simplified fraction with numerator and denominator linear in @code{sin} and @code{cos}.
+Thus @code{trigrat} linearize always when it is possible.
+
+@c ===beg===
+@c trigrat(sin(3*a)/sin(a+%pi/3));
+@c ===end===
+@example
+(%i1) trigrat(sin(3*a)/sin(a+%pi/3));
+(%o1)            sqrt(3) sin(2 a) + cos(2 a) - 1
+
+@end example
+
+The following example is taken from
+Davenport, Siret, and Tournier, @i{Calcul Formel}, Masson (or in English,
+Addison-Wesley), section 1.5.5, Morley theorem.
+
+@c ===beg===
+@c c: %pi/3 - a - b;
+@c bc: sin(a)*sin(3*c)/sin(a+b);
+@c ba: bc, c=a, a=c$
+@c ac2: ba^2 + bc^2 - 2*bc*ba*cos(b);
+@c trigrat (ac2);
+@c ===end===
+@example
+(%i1) c: %pi/3 - a - b;
+                                    %pi
+(%o1)                     - b - a + ---
+                                     3
+(%i2) bc: sin(a)*sin(3*c)/sin(a+b);
+                      sin(a) sin(3 b + 3 a)
+(%o2)                 ---------------------
+                           sin(b + a)
+(%i3) ba: bc, c=a, a=c$
+(%i4) ac2: ba^2 + bc^2 - 2*bc*ba*cos(b);
+         2       2
+      sin (a) sin (3 b + 3 a)
+(%o4) -----------------------
+               2
+            sin (b + a)
+
+                                        %pi
+   2 sin(a) sin(3 a) cos(b) sin(b + a - ---) sin(3 b + 3 a)
+                                         3
+ - --------------------------------------------------------
+                           %pi
+                   sin(a - ---) sin(b + a)
+                            3
+
+      2         2         %pi
+   sin (3 a) sin (b + a - ---)
+                           3
+ + ---------------------------
+             2     %pi
+          sin (a - ---)
+                    3
+(%i5) trigrat (ac2);
+(%o5) - (sqrt(3) sin(4 b + 4 a) - cos(4 b + 4 a)
+
+ - 2 sqrt(3) sin(4 b + 2 a) + 2 cos(4 b + 2 a)
+
+ - 2 sqrt(3) sin(2 b + 4 a) + 2 cos(2 b + 4 a)
+
+ + 4 sqrt(3) sin(2 b + 2 a) - 8 cos(2 b + 2 a) - 4 cos(2 b - 2 a)
+
+ + sqrt(3) sin(4 b) - cos(4 b) - 2 sqrt(3) sin(2 b) + 10 cos(2 b)
+
+ + sqrt(3) sin(4 a) - cos(4 a) - 2 sqrt(3) sin(2 a) + 10 cos(2 a)
+
+ - 9)/4
+
+@end example
+
+@end deffn
+

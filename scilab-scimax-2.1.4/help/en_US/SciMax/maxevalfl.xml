@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="maxevalfl" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>maxevalfl</refname>
+    
+    <refpurpose>Evaluates a Maxima function</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>y=maxevalfl(maxnam,varargin)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>maxnam</term>
+	
+	<listitem>
+	  <para>is the name of the Maxima function</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>varargin</term>
+	
+	<listitem>
+	  <para>is a Scilab list containing parameters of the function</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>y</term>
+	
+	<listitem>
+	  <para>is of type sym</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>This function is useful to define Scilab functions interfacing Maxima functions.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+Syms(['x' 'y']),maxevalfl('diff',list(sin(x),x,2))
+deff('y=maxfun(varargin)','y=maxevalfl(''maxfun'',varargin)')
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="maxevalf">maxevalf</link></member>
+      <member><link linkend="defmf">defmf</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

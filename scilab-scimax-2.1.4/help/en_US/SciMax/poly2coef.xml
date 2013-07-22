@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="poly2coef" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>poly2coef</refname>
+    
+    <refpurpose>Returns a list of coefficients</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>L=poly2coef(P,x)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>P</term>
+	
+	<listitem>
+	  <para>is a sym or a polynomial</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>is a string representing the main variable of P</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>S</term>
+	
+	<listitem>
+	  <para>is a sym-list representing the coefficient in x of P</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>The polynomial can be multi-variable.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+Syms(['x' 'y'])
+P=x^4*y^3-2*x^3*y^2+3*x^2-y+1
+poly2coef(P,x),poly2coef(P,y)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="sym2poly">sym2poly</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

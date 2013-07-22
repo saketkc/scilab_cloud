@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="mathml" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>mathml</refname>
+    
+    <refpurpose>Converts an expression in MathML</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>mml=mathml(x)</synopsis>
+  </refsynopsisdiv>
+
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>x</term>
+	
+	<listitem>
+	  <para>can be of type int, double, complex, string, sym, polynomial</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>mml</term>
+	
+	<listitem>
+	  <para>is a string containing MathML code corresponding to the expression.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsection>
+    <title>Description</title>
+    
+    <para>This function uses the function <literal>mathml</literal> in the Maxima's package <literal>lurkmathml</literal>.</para>
+    <para>You can use the global variable <literal>xml_en_tete</literal> to put the en-tete required for xml file.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+Syms(['x'])
+e=mathml(expand((x+1)^3))
+mputl([xml_en_tete;e],TMPDIR+'/formula.xml')
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Author</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="latex">latex</link></member>
+    </simplelist>
+  </refsection>
+</refentry>
+

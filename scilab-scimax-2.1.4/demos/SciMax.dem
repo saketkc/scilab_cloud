@@ -1,0 +1,169 @@
+mode(7)
+//Define symbolics variables
+Syms x y z
+
+//Combine symbols and manipulate them
+e=(x+y+z)^6
+f=expand(e)
+g=diff(f,x,1,y,1,z,1)
+factor(g)
+
+//Create symbols with Scilab datas
+a=[1 2;3 4];b=[4 5;6 7];
+A=sym(a),B=sym(b)
+
+//And manipulate them with Scilab operators
+a*b,A*B
+a.*b,A.*B
+a/b,A/B
+a./b,A./B
+a^2,A^2
+a.*.b,A.*.B
+3*a,3*A
+det(a),det(A)
+inv(a),inv(A)
+sin(a),sin(A),float(sin(A))
+sinm(a),sinm(A),float(sinm(A))
+
+//Mix the types
+a+A,a*A,a/A
+
+//You can make matrix of matrices
+C=[Matrix(B') Matrix(A^2);Matrix(A) Matrix(inv(B))]
+det(C)
+inv(C)
+A(1)=Matrix(B)
+A(2,2)=x*x
+
+//SciMax manages differents Scilab types
+sym(1+%s+%s^2)
+sym(1+2*%i)
+sym(3.14159)
+sym(int8(12))
+sym(int16(12))
+sym(int32(12))
+sym('Maxima+Maxima')
+sym(sym('Scilab'))
+
+//You can use %inf or -%inf 
+integrate(exp(-x^2),x,0,%inf)
+limit(exp(x),x,%inf)
+limit(tan(x),x,-%inf)
+
+//Define a Scilab fun which interfaces a Maxima fun
+defmf('myfun','f(x,y)','sin(x/y)')
+diff(myfun(x,y),x,1,y,1)
+//You can have an undetermined number of args 
+defmf('Mean','Mean([L])','block(s:0,for i in L do s:s+i,s/length(L))')
+Mean(1,2,3,4,5)
+
+//Play with bigfloats
+%PI=sym('%pi')
+symb(%PI,100)
+symb(%PI,1000)
+
+//If you prefer the rationals
+symr(0.123456)
+symr(%pi)
+
+//I found a function in Maxima doc, can I use it ?
+//Yes, the Maxima doc has been parsed to find ``all'' the functions
+hilbert_matrix(5)
+next_prime(213546)
+zeta(4)
+laplace(exp(2*x+y)*sin(x)*x,x,z)
+
+//Solve equation
+//(note that the Scilab op. == is overloaded to replace Maxima op =)
+eq=x^2==x+1
+res=solve(eq,x)
+res=maplist('rhs',res)
+symb(res(2),100)
+
+//Solve ode with %diff which is the non-evaluated form of diff
+//I made an error, I need to kill f (note that myfun will be unusable)
+kill('f')
+eq=%diff('f(x)',x)=='f(x)'
+desolve(eq,'f(x)')
+//If you prefer an unquoted form
+deff('y=f(x)','y=maxevalf(''f'',x)')
+eq=%diff(f(x),x)==f(x)
+desolve(eq,f(x))
+
+//You can use lists or sets
+symList(1,2,3,4,x^2)
+A=symSet(1,2,3,4)
+B=symSet(5,2,4,6,7)
+union(A,B)
+intersect(A,B)
+
+//You can use LaTeX output
+code=latex(diff(sin(x)/x,x,3))
+
+//You can export in MathML
+code=mathml(expand((x-1)^4))
+
+//and use the variable xml_en_tete to create xml files
+xml_en_tete
+
+//You can affect a variable in Maxima environment with operator semi-colon :
+y=x^2
+x:3
+y
+sin(x)
+//You can kill the variable
+kill(x)
+y
+//It could be useful to increase speed of computations
+y=expand((x+1)^10);z=expand((x-1)^10);
+tic();for i=1:500;y*z;end;Time=toc()
+//Now we put y and z inside Maxima environment
+Syms yy zz;
+yy:y;zz:z;
+tic();for i=1:500;yy*zz;end;Time=toc()
+//Note that Maxima runs more faster when it is compiled with GCL rather then CLISP
+//(on my computer there is a factor 4 between them)
+
+//You can get the string representation of a symbol to use it in Scilab
+//with operator tilde ~
+H=hilbert_matrix(4)
+h=eval(~H)
+fun=diff(sin(x)/x,x)
+deff('y=dersinc(x)','y='+~fun)
+dersinc(1)
+
+//Sometimes Maxima asks you a question
+Syms a
+assume(a>1)
+integrate(x^a/(x+1)^(5/2),x,0,%inf)
+answer('no')
+answer('neg')
+
+//You can make Maxima plots (take care Maxima uses Gnuplot)
+plot2d(sin(x),symList(x,-5,5))
+Syms u v
+expr1=5*cos(u)*(cos(u/2)*cos(v)+sin(u/2)*sin(2*v)+3)-10
+expr2=-5*sin(u)*(cos(u/2)*cos(v)+sin(u/2)*sin(2*v)+3)
+expr3=5*(-sin(u/2)*cos(v)+cos(u/2)*sin(2*v))
+plot3d(symList(expr1,expr2,expr3),symList(u,-%pi,%pi),symList(v,-%pi,%pi),symList('grid',40,40))
+
+//Take care that certains functions in Maxima have a quoted string as argument
+//If you have a problem with package contrib_ode, then maybe you have not it
+//in your Maxima distribution
+Load('""contrib_ode""')
+Syms x y
+eq=x*%diff(y,x)^2-(1+x*y)*%diff(y,x)+y==0
+contrib_ode(eq,y,x)
+
+//Certains Maxima's functions don't work, for example
+gramschmidt([1 2;3 4])
+//You must load the good package before
+Load('""eigen""')
+gramschmidt([1 2;3 4])
+
+//Maxima's help has been translated in Scilab's help
+help gramschmidt
+
+//It's finished !
+mode(-1);
+clear e f g a b A B C x y z %PI eq res f code yy zz h H expr1 expr2 expr3 fun dersinc Mean myfun;
