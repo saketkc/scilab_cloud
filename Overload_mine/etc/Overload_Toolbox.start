@@ -1,0 +1,29 @@
+mode(-1);
+path=get_absolute_file_path('Overload_Toolbox.start')
+printf('Loading Overload library : ')
+
+if or(link()=='liboverload') then
+  printf('The file liboverload is already loaded. Try to unload it with ulink.\n');
+  resume
+end
+
+if getos() == 'Windows' then
+  DYNLIBPATHNAME = path + '../src/overload' + getdynlibext();
+else
+  DYNLIBPATHNAME = path + '../src/liboverload' + getdynlibext();
+end
+
+addinter(DYNLIBPATHNAME, 'liboverload', ['overload']);
+printf ('\n')
+
+printf('Load help : ');
+
+//add help chapter
+path_addchapter = path + "../jar/";
+if ( fileinfo(path_addchapter) <> [] ) then
+    add_help_chapter('Overload Toolbox', path_addchapter, %F);
+    clear add_help_chapter;
+end
+
+printf('help loaded\n');
+printf('You can send your comments to calixte@contrib.scilab.org\n')

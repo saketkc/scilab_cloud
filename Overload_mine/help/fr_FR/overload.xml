@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="overload" xml:lang="fr"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>overload</refname>
+    
+    <refpurpose>surcharge les fonctions définies par l'utilisateur</refpurpose>
+  </refnamediv>
+  
+  <refsynopsisdiv>
+    <title>Séquence d'appel</title>
+    
+    <synopsis>overload(funnam [,type])</synopsis>
+    <synopsis>overload()</synopsis>
+    <synopsis>overload(table_of_overloaded_fun)</synopsis>
+  </refsynopsisdiv>
+  
+  <refsection>
+    <title>Paramètres</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>funnam</term>
+	
+	<listitem>
+	  <para>nom d'une fonction</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>type</term>
+	
+	<listitem>
+	  <para>un vecteur optionel (1 par n) de chaînes contenant les types déjà gérés par la fonction (voir <link linkend="overloading">overloading</link> pour les codes des différents types)</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>table_of_overloaded_fun</term>
+	
+	<listitem>
+	  <para>une matrice (n par 2) de chaînes de caractères contenant dans la première colonne le nom des fonctions qui gèrent un type spécifique et dans la seconde le nom de la fonction réellement appelée.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+  
+  <refsection>
+    <title>Description</title>
+    
+    <para>Cette fonction permet de surcharger des fonctions définies par l'utilisateur.</para>
+    <para>La fonction surchargée doit exister soit en mémoire soit dans un fichier accessible.</para>
+    <para>Par exemple, l'appel <literal>overload(funnam,['s','c'])</literal> crée une copie <literal>%s_fun=fun</literal>, crée une entrée <literal>%c_fun</literal> dans la table et celle-ci pointe vers <literal>'%s_fun'</literal>, efface <literal>fun</literal> et crée un point d'entrée <literal>fun</literal> dans la libraire dynamique. Après cela, l'appel de <literal>fun(arg1,...)</literal> sera transformé en <literal>%&lt;type_of_arg1&gt;_fun(arg1,...)</literal>.</para>
+    <para>Il faut faire attention à ce que cette toolbox ne peut surcharger que 98 fonctions.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Exemples</title>
+    
+    <programlisting role="example">
+//on définit une fonction inc pour les réels (type 's'),
+//les polynômes ('p') ou les booleéns ('b')
+//mais pas pour les chaînes ('c')
+deff('y=inc(x)','y=x+1')
+
+//on définit une focntion %c_inc qui
+//gère le type chaîne
+deff('y=%c_inc(x)','y=code2str(str2code(x)+1)')
+
+//on surcharge la fonction inc et l'on préserve
+//les types 's', 'p' et 'b'
+overload('inc',['s' 'p' 'b'])
+
+//on peut maintenant utiliser inc avec les constantes,
+//les polynômes ou les chaînes
+inc(2),inc(1+%s+%s^2),inc(%t)
+inc('abcdef')
+
+//pour voir les types gérés par %s_inc
+a=overload()
+
+//on peut enlever le type 'p'
+a(2,:)=[],overload(a)
+inc(%s)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Auteur</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>Voir aussi</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="overloading">overloading</link></member>
+    </simplelist>
+  </refsection>
+</refentry>

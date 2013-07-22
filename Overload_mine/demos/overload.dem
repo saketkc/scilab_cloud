@@ -1,0 +1,32 @@
+mode(7);
+//we define a function for integer and constant types
+deff('myfun(x)','disp(''I love numbers'')');
+//we overload it and preserve it for integer (i) and constant (s) types
+overload('myfun',['s' 'i']);
+//we define myfun for string (c) and polynomial (p) types
+deff('%c_myfun(x)','disp(''I love strings too'')');
+deff('%p_myfun(x)','disp(''But polynomials are very interesting objects'')');
+//now we can call myfun with integer, constant, string and polynomial types
+myfun(3.1)
+myfun(int8(1))
+myfun('hello')
+myfun(1+%s)
+//%s_myfun is a copy of original myfun
+//and %i_myfun is a sort of pointer to %s_myfun
+//you can see it with overload() (no arguments)
+tab=overload()
+//you can replace %s_myfun by a new function in the array and reload the array
+deff('mynewfun(x)','disp(''I love integers'')')
+tab(1,2)='mynewfun';
+overload(tab);
+//so %i_myfun points to mynewfun
+myfun(3.1)
+myfun(int8(1))
+//the function %s_myfun exists in memory, you can modify it
+deff('%s_myfun(x)','disp(''I love real or complex numbers'')')
+myfun(3.1)
+//It's finished !!
+mode(-1)
+
+clearfun myfun
+clear %s_myfun mynewfun %c_myfun %p_myfun 

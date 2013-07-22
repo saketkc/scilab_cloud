@@ -1,0 +1,14 @@
+Overload is a Scilab toolbox to overload Scilab's macros.
+
+To install it :
+	
+	- Just launch Scilab and type `exec builder.sce'
+	- You can see a demo in typing `exec demos/overload.dem' 
+
+I wrote this toolbox under Debian Lenny with a kernel 2.6.26 and Scilab 5.1.1.
+
+You can write me at :
+		
+			calixte.denizet@ac-rennes.fr
+
+For the windows port: a big thanks to Allan Cornet and Yann Collette

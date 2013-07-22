@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry version="5.0-subset Scilab" xml:id="overload" xml:lang="en"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns3="http://www.w3.org/1999/xhtml"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <pubdate>$LastChangedDate$</pubdate>
+  </info>
+  
+  <refnamediv>
+    <refname>overload</refname>
+    
+    <refpurpose>overload user-defined functions</refpurpose>
+  </refnamediv>
+  
+  <refsynopsisdiv>
+    <title>Calling Sequence</title>
+    
+    <synopsis>overload(funnam [,type])</synopsis>
+    <synopsis>overload()</synopsis>
+    <synopsis>overload(table_of_overloaded_fun)</synopsis>
+  </refsynopsisdiv>
+  
+  <refsection>
+    <title>Parameters</title>
+    
+    <variablelist>
+      <varlistentry>
+	<term>funnam</term>
+	
+	<listitem>
+	  <para>name of a user-defined function</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>type</term>
+	
+	<listitem>
+	  <para>an optional vector (1 by n) of strings containing the types already managed by the function (see <link linkend="overloading">overloading</link> for type codes)</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>table_of_overloaded_fun</term>
+	
+	<listitem>
+	  <para>a matrix (n by 2) of strings containing in the first column the name of functions which manage a specific type and in the second column the name of a real function.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+  
+  <refsection>
+    <title>Description</title>
+    
+    <para>This function gives the possibility to overload user-defined functions.</para>
+    <para>The overloaded function must exist in memory or in a accessible file.</para>
+    <para>For example, the call <literal>overload(funnam,['s','c'])</literal> makes the copy <literal>%s_fun=fun</literal>, creates an entry <literal>%c_fun</literal> in table which points to <literal>'%s_fun'</literal>, clears <literal>fun</literal> and creates an entry point <literal>fun</literal> in the dynamic library. After that, the call of <literal>fun(arg1,...)</literal> will be transformed in <literal>%&lt;type_of_arg1&gt;_fun(arg1,...)</literal>.</para>
+    <para>Take care that only 98 functions can be overloaded by the toolbox.</para>
+    
+  </refsection>
+  
+  <refsection>
+    <title>Examples</title>
+    
+    <programlisting role="example">
+//define a fun inc for constant (type 's'),
+//polynomial ('p') or boolean ('b')
+//but not for string ('c')
+deff('y=inc(x)','y=x+1')
+
+//define a function %c_inc which
+//deals the string type
+deff('y=%c_inc(x)','y=code2str(str2code(x)+1)')
+
+//overload the function inc and preserve
+//the types 's', 'p' and 'b'
+overload('inc',['s' 'p' 'b'])
+
+//now we can use inc with constant,
+//polynomial or string
+inc(2),inc(1+%s+%s^2),inc(%t)
+inc('abcdef')
+
+//to see types managed by %s_inc
+a=overload()
+
+//you can remove 'p' type
+a(2,:)=[],overload(a)
+inc(%s)
+    </programlisting>
+  </refsection>
+  
+  <refsection>
+    <title>Authors</title>
+    
+    <simplelist type="vert">
+      <member>Calixte Denizet</member>
+    </simplelist>
+  </refsection>
+  
+  <refsection>
+    <title>See also</title>
+    
+    <simplelist type="inline">
+      <member><link linkend="overloading">overloading</link></member>
+    </simplelist>
+  </refsection>
+</refentry>
