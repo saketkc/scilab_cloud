@@ -1,5 +1,5 @@
-mode(-1);
-path=get_absolute_file_path('Overload_Toolbox.start')
+//mode(-1);
+path=get_absolute_file_path('Overload_Toolbox.start');
 //printf('Loading Overload library : ')
 
 if or(link()=='liboverload') then
@@ -19,11 +19,11 @@ printf ('\n')
 //printf('Load help : ');
 
 //add help chapter
-path_addchapter = path + "../jar/";
-if ( fileinfo(path_addchapter) <> [] ) then
-    add_help_chapter('Overload Toolbox', path_addchapter, %F);
-    clear add_help_chapter;
-end
+//path_addchapter = path + "../jar/";
+//if ( fileinfo(path_addchapter) <> [] ) then
+//    add_help_chapter('Overload Toolbox', path_addchapter, %F);
+//    clear add_help_chapter;
+//end
 
 //printf('help loaded\n');
 //printf('You can send your comments to calixte@contrib.scilab.org\n')

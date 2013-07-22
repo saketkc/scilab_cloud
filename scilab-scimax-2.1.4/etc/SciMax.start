@@ -33,7 +33,7 @@ else
   exec(Overload_TB_path,-1)
 end
 
-//printf('\nLoading Maxima library : ')
+printf('\nLoading Maxima library : ')
 
 functions=['maxinit';'maxkill';'maxevalf';'maxevalfl';'%sym_p';'sym';'Matrix';'symnp';'defmf';'Syms';'latex';'mathml';'answer';'noanswer';'maxadd';'maxpow';'maxmul';'maxdiv';'maxsub';'maxbs';'maxpmul';'maxpdiv';'maxpbs';'maxppow';'maxfb';'maxkp';'maxlow';'maxleq';'maxgreat';'maxgeq';'maxneq';'maxeq';'maxaff']
 
@@ -84,21 +84,21 @@ end
 
 
 //add help chapter
-//printf('Load help : ');
+printf('Load help : ');
 path_addchapter = mpath + "jar/";
 if ( fileinfo(path_addchapter) <> [] ) then
     add_help_chapter('SciMax Toolbox', path_addchapter, %F);
     clear add_help_chapter;
 end
 
-//printf('help loaded\n');
+printf('help loaded\n');
 
-//add_demo('SciMax demo',mpath+'demos/SciMax.dem');
-//printf('You can see a demo with exec ""'+mpath+'demos/SciMax.dem""\n');
+add_demo('SciMax demo',mpath+'demos/SciMax.dem');
+printf('You can see a demo with exec ""'+mpath+'demos/SciMax.dem""\n');
 
 //La variable xml_en_tete sert a ajouter l'en-tete necessaire pour les fichiers contenant du mathml 
 xml_en_tete=['<?xml version=""1.0"" encoding=""UTF-8""?>';'<!DOCTYPE math PUBLIC ""-//W3C//DTD MathML 2.0//EN"" ""http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"">'];
 
-//printf('\n** Use maxinit to start Maxima  **\n')
-maxinit;
+printf('\n** Use maxinit to start Maxima  **\n')
+
 clear mpath Overload_TB_path functions types_geres op_maxfun m n f err
