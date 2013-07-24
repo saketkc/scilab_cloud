@@ -1,0 +1,16 @@
+function example_mode(level_mode)
+ mode(level_mode)
+ a = 3
+ disp(mode());
+endfunction
+
+mode(2)
+
+example_mode(0)
+example_mode(-1)
+example_mode(2)
+example_mode(1)
+example_mode(3)
+example_mode(7)
+
+mode(2)

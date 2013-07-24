@@ -1,0 +1,8 @@
+Requirements: 
+1. Django
+2. reportlab
+3. sciscipy
+4. Scilab
+
+Run Server: python manaage.py runserver
+				

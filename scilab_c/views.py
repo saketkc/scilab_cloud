@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.http import HttpRequest
 from django.shortcuts import render_to_response
 from django.contrib.sites.models import Site
-#import MySQLdb as mdb
+import MySQLdb as mdb
 import re
 import os
 from reportlab.pdfgen import canvas
@@ -98,19 +98,36 @@ def get_books(request):
 	return HttpResponse(json.dumps({"response":{"books":(d_sorted_by_value)},"message":{"code":"200","description":"success"}}),"application/json")
 
 def default_view(request):
-    user_id="3"
-    return render_to_response('../public/default.html',{'input':'Type Code Here','uid':user_id})
+	try:
+		user_id = request.session['user_id']
+	except:
+		return HttpResponseRedirect("/login")
+	all_books={}
+	books=[]
+	books_id=[]
+	con = mdb.connect("localhost","root","fedora13","scilab")
+	with con:
+		cur = con.cursor()
+		query = "SELECT id,book,author FROM  textbook_companion_preference where approval_status=1 ORDER BY book ASC"
+		cur.execute(query)
+		rows = cur.fetchall()
+		for row in rows:
+			if row[1]!="" and row[2]!="":
+				all_books[row[0]]=row[1].replace("  "," ")+"(" + row[2].replace("  "," ")+")"
+	d_sorted_by_value = OrderedDict(sorted(all_books.items(), key=lambda x: x[1]))
+	return render_to_response('../public/default.html',{'input':'Type Code Here','uid':user_id,'username':request.session['username'],'all_books':d_sorted_by_value})
 @csrf_exempt
 def scilab_new_evaluate(request):
 
+    current_site = HttpRequest.build_absolute_uri(request)
     try:
         api_key = request.POST.get('api_key')
     except:
         api_key = None
     try:
-        api_user = request.POST.get('api_user')
+	api_user = request.POST.get('api_user')
     except:
-        api_user = None
+	api_user = None
 
     if api_user not in api_keys.keys():
         return HttpResponse(json.dumps({"response":{},"message":{"code":"401","description":"API user not defined"}}),"application/json")
@@ -168,13 +185,13 @@ def scilab_new_evaluate(request):
     f = open(cwdsf,"w")
     ## Yet another hack for syms -> Syms !
     all_new_code = re.sub(r'syms\s+','Syms ', all_code)
-
+	
     user_id = str(request.session['user_id'])
     graph = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").replace(" ","")
     if all_new_code!=all_code:
         write_code = "driver(\"PNG\");\n" + "\nxinit(\""+cwd+"/"+graph+".png\");\n" + "exec " + syms_loader + ";\nmode(2);\n" + all_new_code+ "\nxend();\n" + "\nquit();"
     else:
-
+        
         write_code = "driver(\"PNG\");\n" + "\nxinit(\""+cwd+"/"+graph+".png\");\nmode(2);\n" + all_new_code+ "\nxend();\n" + "\nquit();"
     f.write(write_code)
     f.close()
