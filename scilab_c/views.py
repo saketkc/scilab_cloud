@@ -195,7 +195,7 @@ def scilab_new_evaluate(request):
         write_code = "driver(\"PNG\");\n" + "\nxinit(\""+cwd+"/"+graph+".png\");\nmode(2);\n" + all_new_code+ "\nxend();\n" + "\nquit();"
     f.write(write_code)
     f.close()
-    p=subprocess.Popen("scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    p=subprocess.Popen("/opt/scilab/bin/scilab-adv-cli -nb -f "+ cwdsf , shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     out, err = p.communicate()
     if os.path.exists(cwd+"/"+graph+".png"):
 	graph_exists = 1
