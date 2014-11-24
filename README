@@ -1,8 +1,6 @@
-Requirements: 
-1. Django
-2. reportlab
-3. sciscipy
-4. Scilab
+Scilab On Cloud
+===============
+Try Out: http://cloud.scilab.in
 
-Run Server: python manaage.py runserver
-				
+I am no longer actively associated with the project. 
+The code on the server is way different from this hackish implementation.
